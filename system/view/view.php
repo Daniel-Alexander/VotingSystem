@@ -2,30 +2,68 @@
 
 class cView
 {
-	private $path = 'template';  
-    private $template = null;
+	private $path = 'template';
+	private $error = false;
+  private $template = null;
 	private $container = null;
 	private $role = null;
 	private $page = null;
 	private $subpage = null;
 	private $page_id = null;
+	private $stage = null;
 	private $model = null;
-	
-	function __construct()
+
+	function __construct($errorhandle)
 	{
 		// TODO better start with error page here
+		$this->errorhandle = $errorhandle;
 		$this->template = 'aut_student';
 		$this->container = 0;
 		$this->role = 0;
 		$this->page = 'main';
 		$this->subpage = 'none';
 		$this->page_id = 0;
+		$this->stage = 0;
 	}
-	
+
 	public function setModel($model)
 	{
 		// TODO include set-check value
 		$this->model = $model;
+	}
+
+	public function setStage($stage)
+	{
+		$this->stage = $stage;
+	}
+
+	public function getStageName()
+	{
+		switch($this->stage)
+		{
+			case 1:
+				return "Set up";
+				break;
+			case 2:
+				return "Sign in";
+				break;
+			case 3:
+				return "Sign in finished";
+				break;
+			case 4:
+				return "Voting";
+				break;
+			case 5:
+				return "Assignment";
+				break;
+			case 6:
+				return "Post Assignment";
+				break;
+			default:
+				return "UNKNOWN";
+				break;
+		}
+		return "UNKNOWN";
 	}
 
 	public function loadLogoutPage()
@@ -33,37 +71,74 @@ class cView
 		$this->container = 0;
 		$this->template = 'logout';
 	}
-	
-	public function loadAdminPage($page,$subpage,$page_id)
+
+	public function loadAdminPage($page,$subpage,$page_id,$error)
 	{
-		// TODO check if page exist
 		$role = 2;
-		$this->page = $page;
-		$this->subpage = $subpage;
-		$this->page_id = $page_id;
+		$this->error = $error;
 		$this->container = 1;
-		$this->template = 'admin';	
+		$this->template = 'admin';
+
+		if(!$error)
+		{
+			$this->page = $page;
+			$this->subpage = $subpage;
+			$this->page_id = $page_id;
+		}
+		else
+		{
+			$this->page = $this->errorhandle->getPage();
+			$this->subpage = $this->errorhandle->getSubpage();
+			$this->page_id = $this->errorhandle->getPageId();
+		}
+
 	}
-	
-	public function loadTeacherPage($page)
+
+	public function loadTeacherPage($page,$subpage,$page_id,$error)
 	{
 		// TODO check if page exist
 		$role = 1;
-		$this->page = $page;
+		$this->error = $error;
 		$this->container = 1;
 		$this->template = 'teacher';
-		
+
+		if(!$error)
+		{
+			$this->page = $page;
+			$this->subpage = $subpage;
+			$this->page_id = $page_id;
+		}
+		else
+		{
+			$this->page = $this->errorhandle->getPage();
+			$this->subpage = $this->errorhandle->getSubpage();
+			$this->page_id = $this->errorhandle->getPageId();
+		}
+
 	}
-	
-	public function loadStudentPage($page)
+
+	public function loadStudentPage($page,$subpage,$page_id,$error)
 	{
 		// TODO check if page exist
 		$role = 0;
-		$this->page = $page;
+		$this->error = $error;
 		$this->container = 1;
 		$this->template = 'student';
+
+		if(!$error)
+		{
+			$this->page = $page;
+			$this->subpage = $subpage;
+			$this->page_id = $page_id;
+		}
+		else
+		{
+			$this->page = $this->errorhandle->getPage();
+			$this->subpage = $this->errorhandle->getSubpage();
+			$this->page_id = $this->errorhandle->getPageId();
+		}
 	}
-	
+
 	public function loadStartPage($role)
 	{
 		if(strcmp($role,'student') == 0)
@@ -78,24 +153,24 @@ class cView
 		}
 		return 0;
 	}
-		
+
 	public function loadTemplate()
 	{
         $tpl = $this->template;
-		
+
 		if($this->container)
 		{
 			$head = $this->path . DIRECTORY_SEPARATOR . 'head.php';
 			$foot = $this->path . DIRECTORY_SEPARATOR . 'foot.php';
 		}
-		  
-        $body = $this->path . DIRECTORY_SEPARATOR . $tpl . '.php';  
-        $exists = file_exists($body);  
+
+        $body = $this->path . DIRECTORY_SEPARATOR . $tpl . '.php';
+        $exists = file_exists($body);
 
         if ($exists)
-		{  
-            ob_start();  
-            
+		{
+            ob_start();
+
 			if($this->container)
 			{
 				include $head;
@@ -106,18 +181,18 @@ class cView
 			{
 				include $body;
 			}
-			
-            $output = ob_get_contents();
-			
-            ob_end_clean();  
 
-            return $output;  
-        }  
-        else 
-		{  
+            $output = ob_get_contents();
+
+            ob_end_clean();
+
+            return $output;
+        }
+        else
+		{
 			// TODO Load Error not exist page here
-            return 'could not find template';  
-        }  
+            return 'could not find template';
+        }
 
 	}
 }

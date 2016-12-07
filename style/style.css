@@ -4,7 +4,7 @@ footer {
     display: block;
 }
 /***********************************************/
- 
+
 body {
     background-color: #f2f2f2;/*#A4A4A4;/*#FE9A2E;*/
 	font-family: Georgia, Times, "Times New Roman", serif;
@@ -15,7 +15,7 @@ body {
 	background-color: #A4A4A4;
 	height: 50px;
 }
- 
+
 #wrapper {
     max-width: 960px;
     margin: 0px auto;
@@ -24,7 +24,7 @@ body {
     padding: 20px;
 	border-radius: 4px;
 	box-shadow: 1px 0 0 0 #d2d2d2, -1px 0 0 0 #d2d2d2, 0 1px 0 0 #b6b6b6, 0 2px 0 0 #d2d2d2, 2px 0 0 0 #e6e6e6, -2px 0 0 0 #e6e6e6, 0 3px 0 0 #e6e6e6, 0 -1px 0 0 #e6e6e6 !important;
-	
+
 }
 
 #login-wrapper {
@@ -36,7 +36,7 @@ body {
 	border-radius: 4px;
 	box-shadow: 1px 0 0 0 #d2d2d2, -1px 0 0 0 #d2d2d2, 0 1px 0 0 #b6b6b6, 0 2px 0 0 #d2d2d2, 2px 0 0 0 #e6e6e6, -2px 0 0 0 #e6e6e6, 0 3px 0 0 #e6e6e6, 0 -1px 0 0 #e6e6e6 !important;
 }
- 
+
 header {
     width: 100%;
     height: 100px;
@@ -55,7 +55,7 @@ nav {
     margin-bottom: 20px;
 	border-radius: 4px;
 }
- 
+
 footer {
     clear: both;
     width: 100%;
@@ -157,7 +157,7 @@ input[type="text"] {
 select:focus,
 input[type="text"]:focus {
 	border: 1px solid #33C3F0;
-	outline: 0; 
+	outline: 0;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
@@ -166,11 +166,11 @@ input[type="radio"] {
 	margin-bottom: 6px;
     margin-top: 6px;
 }
- 
+
 label > .label-body {
 	display: inline-block;
 	margin-left: .5rem;
-	font-weight: normal; 
+	font-weight: normal;
 }
 
 table {
@@ -212,6 +212,16 @@ h3 {
     font-size: 200%;
 }
 
+.errcontainer {
+  background: #F04D5B;
+  color: black;
+  padding: 3px 10px 3px 10px;
+  font-size: 11px;
+  margin-bottom: 3px;
+  boder-radius: 20px;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+}
 
 .cell1 {
 	padding-bottom:10px;
@@ -233,7 +243,7 @@ h3 {
 		width: 96%;
 		/*background-color: red;*/
 	}
-	
+
 	.one-half {
 		display: inline-block;
 		margin-left:1%;
@@ -241,7 +251,7 @@ h3 {
 		width: 48%;
 		/*background-color: red;*/
 	}
-	
+
 	.one-third {
 		display: inline-block;
 		margin-left:1%;
@@ -257,7 +267,7 @@ h3 {
 		width: 64%;
 		/*background-color: blue;*/
 	}
-	
+
 .login_container {
 	width: 100%;
     height: 300px;
@@ -268,30 +278,30 @@ h3 {
     left: 0;
     right: 0;
 	margin: auto;
-}	
+}
 
 @media screen and (max-width: 800px) {
     nav {
         width: 100%;
     }
- 
+
     .container {
         width: 100%;
 		display:block;
-    }		
-	
+    }
+
 		.one-half {
 			width: 96%;
 		}
-	
+
 		.one-third {
 			width: 96%;
 		}
-		
+
 		.two-thirds {
 			width: 96%;
 		}
- 
+
     #wrapper {
         padding: 10px;
         margin-top: 0px;

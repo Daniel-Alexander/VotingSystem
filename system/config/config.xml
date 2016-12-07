@@ -4,20 +4,7 @@
 	<stage>1</stage>
 	<deadline>14-02-2017</deadline>
 	<nwish>2</nwish>
-	<skill> 
-		<sign>1</sign>
-		<name>Programmierkenntnisse</name>
-	</skill>
-	<skill> 
-		<sign>2</sign>
-		<name>Hardwarekenntnisse</name>
-	</skill>
-	<skill> 
-		<sign>3</sign>
-		<name>Mathekenntnisse</name>
-	</skill>
-	<skill> 
-		<sign>4</sign>
-		<name>Soft skills</name>
-	</skill>
-</config>
+	
+	
+	
+<skill><sign>1</sign><name>Softwarekenntnisse</name></skill><skill><sign>3</sign><name>Programmierkentnisse</name></skill><skill><sign>2</sign><name>Softskills</name></skill><skill><sign>4</sign><name>Softwarekenntnisse</name></skill></config>
