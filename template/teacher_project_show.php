@@ -33,10 +33,10 @@
     ?>
     <hr>
 
-  <div class="one-half">
+  <div class="one-third">
     <a href="redirect.php?page=project&subpage=edit&page_id=<?php echo $this->page_id ?>"><button class="linkBtn">Bearbeiten</button></a>
   </div>
-  <div class="one-half">
+  <div class="one-third">
     <form action="redirect.php?page=project" method="post">
       <input type="hidden" value="<?php echo $this->page_id ?>" name="project_to_delete">
       <input type="submit" value="Löschen" name="delete_project">
@@ -47,11 +47,12 @@
   <?php
     echo "<h1>Erstwunsch: </h1>";
     $this->model->startQuery("first_interests",$row['project_id']);
+
     while($stdnt = $this->model->getRow())
     {
       $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-      echo $stdnt_name['full_name'];
-      echo "<a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></th>";
+      //echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
+      echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>".$stdnt_name['full_name']."</button></a></div></th>";
       echo "<br>";
     }
     if($nwishes > 1)
@@ -61,8 +62,8 @@
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo $stdnt_name['full_name'];
-        echo "<a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></th>";
+        echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
+        echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></div></th>";
         echo "<br>";
       }
     }
@@ -73,8 +74,8 @@
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo $stdnt_name['full_name'];
-        echo "<a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></th>";
+        echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
+        echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></div></th>";
         echo "<br>";
       }
     }

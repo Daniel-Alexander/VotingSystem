@@ -4,14 +4,24 @@
         <link rel="stylesheet" href="style/style.css" />
     </head>
     <body>
-		<div class="top-box" />
-        <div id="login-wrapper">
-			<header>
-				Logout
-			</header>
-            <div class="login_container">
+      <div class="header">
+      	<span class="text">
+      		Votingsystem
+      	</span>
+      </div>
+      <div id="login-wrapper">
+      <div class="login_container">
 				<div class="one">
-					Logout erfolgreich <br>
+          <?php
+          if($this->deleted_page)
+          {
+            echo "<div class='infobox'>Sie wurden wieder gelöscht</div>";
+          }
+          else
+          {
+            echo "<div class='infobox'>Logout erfolgreich</div>";
+          }
+          ?>
 					<a href="index.php"><u>Zum Start</u></a>
 				</div>
 			</div>

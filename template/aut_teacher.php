@@ -4,13 +4,15 @@
         <link rel="stylesheet" href="style/style.css" />
     </head>
     <body>
-		<div class="top-box" />
+      <div class="header">
+      	<span class="text">
+      		Votingsystem
+      	</span>
+      </div>
         <div id="login-wrapper">
-			<header>
-				Register
-			</header>
             <div class="login_container">
 				<div class="one">
+          <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
 					<form action="index.php" method="post">
 						<label for="id1">E-Mail</label>
 						<input type="text" required name="teacher_mail" id="id1">
@@ -19,7 +21,7 @@
 						<input type="submit" value="Login" name="teacher_login">
 					</form>
 					<br>
-					<a href="index.php?role=student"><u>Register as Student</u></a>
+					<a href="index.php?role=student"><u>Als Student registrieren</u></a>
 				</div>
 			</div>
 		</div>

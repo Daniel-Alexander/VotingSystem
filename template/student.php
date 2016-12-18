@@ -1,10 +1,17 @@
 
-<nav>
-	Main Menu<br>
-	<a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a><br>
-	<a href="redirect.php?page=data"><button class="navBtn">Daten</button></a><br>
-	<a href="redirect.php?logout=1"><button class="navBtn">Ausloggen</button></a>
+<div class="navbox">
+	<button class="dropNav" onclick="toggleNavigation()">Menu</button>
+	<nav class="navigation">
+		<ul>
+			<li>Navigation</li>
+
+			<li><a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a></li>
+			<li><a href="redirect.php?page=data"><button class="navBtn">Daten</button></a></li>
+			<li><a href="redirect.php?logout=1"><button class="navBtn">Ausloggen</button></a></li>
+		</ul>
+		Rolle: <br>Student<br> Phase: <?php echo $this->getStageName();?>
 </nav>
+</div>
 
 <div class="container">
 
@@ -57,3 +64,5 @@
 	<?php } ?>
 
  </div>
+
+  <script src="js/navigation.js"></script>

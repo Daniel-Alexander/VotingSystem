@@ -70,15 +70,13 @@ class cDatabase
 			$this->connect();
 
 		// TODO make this nicer and safer: use prepared statement
-		// TODO use error statements
 		$sql = "select student_id from student where crypt_id = '".$id."'";
 		$result = mysql_query($sql) or die(mysql_error());
 
 		if(mysql_num_rows($result) == 1 )
 		{
-			// TODO return something
-
 			$row = mysql_fetch_assoc($result);
+			// TODO maybe dont do this everytime!
 			$this->studentToggleActive($row['student_id'],1);
 			return $row['student_id'];
 		}
@@ -220,9 +218,9 @@ class cDatabase
 			$sql = "insert student_order"
 				 . "(student_id, project1_id, project2_id, project3_id) values "
 				 . "('" . $student_id . "', "
-				 . "'" . $project1_id . "', "
-				 . "'" . $project2_id . "', "
-				 . "'" . $project3_id . "')";
+				 . "'" . $interest1 . "', "
+				 . "'" . $interest2 . "', "
+				 . "'" . $interest3 . "')";
 		}
 		mysql_query($sql) or die(mysql_error());
 	}
@@ -300,6 +298,42 @@ class cDatabase
 			return false;
 	}
 
+	public function getStudentsByProject($project_id,$wish)
+	{
+		// TODO return error code here
+		if(!$this->connected)
+			$this->connect();
+
+			$sql = "SELECT student.student_id, student.full_name FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project".$wish."_id = '".$project_id."'";
+			$result = mysql_query($sql) or die(mysql_error());
+
+			if(mysql_num_rows($result) > 0 )
+			{
+
+				$students = array(array(),array());
+				while ($row = mysql_fetch_assoc($result))
+				{
+					array_push($students[0],$row["student_id"]);
+					array_push($students[1],$row["full_name"]);
+				}
+
+				return $students;
+				/*
+				$str = "";
+				while ($row = mysql_fetch_assoc($result))
+				{
+					$str = $str.$row["full_name"]."; ";
+				}
+
+				return $str;
+				*/
+			}
+
+			else return false;
+
+
+	}
+
 	public function insertNewProject($titel, $keywords, $abstract, $description, $degree, $skills, $teacher_id)
 	{
 		// TODO use error code here
@@ -360,7 +394,6 @@ class cDatabase
 						."OR project_order.teacher4_id = '".$auth_id."'"
 						."OR project_order.teacher5_id = '".$auth_id."')";
 			$result = mysql_query($sql) or die(mysql_error());
-			echo mysql_num_rows($result);
 
 			if(mysql_num_rows($result) == 1 )
 			{

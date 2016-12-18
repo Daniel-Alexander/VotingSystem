@@ -12,10 +12,12 @@ class cView
 	private $page_id = null;
 	private $stage = null;
 	private $model = null;
+	private $deleted_page = null;
 
-	function __construct($errorhandle)
+	function __construct($model,$errorhandle)
 	{
 		// TODO better start with error page here
+		$this->model = $model;
 		$this->errorhandle = $errorhandle;
 		$this->template = 'aut_student';
 		$this->container = 0;
@@ -24,12 +26,7 @@ class cView
 		$this->subpage = 'none';
 		$this->page_id = 0;
 		$this->stage = 0;
-	}
-
-	public function setModel($model)
-	{
-		// TODO include set-check value
-		$this->model = $model;
+		$this->deleted_page = false;
 	}
 
 	public function setStage($stage)
@@ -66,8 +63,9 @@ class cView
 		return "UNKNOWN";
 	}
 
-	public function loadLogoutPage()
+	public function loadLogoutPage($deleted)
 	{
+		if ($deleted === true) $this->deleted_page = true;
 		$this->container = 0;
 		$this->template = 'logout';
 	}
@@ -139,8 +137,9 @@ class cView
 		}
 	}
 
-	public function loadStartPage($role)
+	public function loadStartPage($role,$error)
 	{
+		$this->error = $error;
 		if(strcmp($role,'student') == 0)
 		{
 			$this->template = 'aut_student';

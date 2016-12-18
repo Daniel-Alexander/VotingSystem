@@ -656,6 +656,14 @@ class cModel
 		return $this->database->getTeacherByProject($project_id);
 	}
 
+	public function getStudentsByProject($project_id,$wish)
+	{
+		// TODO return specific error codes here
+		if(!$project_id) return false;
+
+		return $this->database->getStudentsByProject($project_id,$wish);
+	}
+
 	public function deleteProject($project_id)
 	{
 		$project_id = $this->whitelist->validateId($project_id);
@@ -703,13 +711,14 @@ class cModel
 
 		if(!$name or !$matr or !$email or !$field or !$grade or !$skills)
 		{
-			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills);
+			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills,false);
 			return true;
 		}
 
 		$grade = $this->translate->degree2num($grade);
 		$skills = $this->translate->skills2str($skills);
 
+		//echo $skills;
 		if(!$grade or !$skills)
 		{
 			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills,false);

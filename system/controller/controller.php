@@ -19,8 +19,8 @@ class cController
 		$this->get = $get;
 		$this->post = $post;
 		$this->errorhandle = new cErrorHandle();
-		$this->view = new cView($this->errorhandle);
 		$this->model = new cModel($this->errorhandle);
+		$this->view = new cView($this->model,$this->errorhandle);
 		$this->getConfig();
 	}
 
@@ -30,12 +30,11 @@ class cController
 		{
 			// TODO replace this by secure function
 			session_destroy();
-			$this->view->loadLogoutPage();
-			return;
+			$this->view->loadLogoutPage(false);
+			return false;
 		}
 
-		// TODO View only gets a model if nessesary. Is that the best way?
-		$this->view->setModel($this->model);
+		//$this->view->setModel($this->model);
 
 		$page = 'main';
 		$subpage = 'none';
@@ -68,15 +67,22 @@ class cController
 			default: // fail
 				// TODO replace this by secure function
 				session_destroy();
+				$this->view->loadLogoutPage(false);
 				break;
 		}
+
+		return false;
 	}
 
 	function redirectOutside()
 	{
+		$err = false;
+		$role = 'student';
+
 		if(isset($this->get['token']))
 		{
 			// INFO token gets validated in model
+			// INFO Student gets activated in model
 			$student_id = $this->studentLogin();
 
 			if($student_id !== false)
@@ -87,55 +93,58 @@ class cController
 				$_SESSION['role'] = 0;
 				$_SESSION['student_id'] = $student_id;
 
-				// TODO set active here!
-
 				header('Location: redirect.php');
+				return false;
 			}
 		}
 
 		if(isset($this->post['create_new_student']))
 		{
-			// TODO check validness
-			$this->createNewStudent();
+			$err = $this->createNewStudent();
 		}
 
 		if(isset($this->post['teacher_login']))
 		{
+
 			$stage = $this->teacherLogin();
+
 			if(!$stage)
 			{
-				return false;
+				$err = $this->errorhandle->errLoginFail();
+				$role = "teacher";
 			}
-			switch ($stage[0])
+			else
 			{
-				case 2: // Admin
-				case 1: // teacher
-					// TODO replace this by secure function
-					session_start();
-					$_SESSION['valid'] = 1;
+				switch ($stage[0])
+				{
+					case 2: // Admin
+					case 1: // teacher
+						// TODO replace this by secure function
+						session_start();
+						$_SESSION['valid'] = 1;
+						$_SESSION['role'] = $stage[0];
+						$_SESSION['current_id'] = $stage[1];
 
-					// TODO check if Admin already logged in?
-					$_SESSION['role'] = $stage[0];
-					$_SESSION['current_id'] = $stage[1];
-					header('Location: redirect.php');
-
-					break;
-				case 0: // fail
-				default:
-				// TODO redirect to error page here: Err: Login failed
-					break;
+						header('Location: redirect.php');
+						//return false;
+						break;
+					default: // fail
+						echo "hierr";
+						$err = $this->errorhandle->errLoginFail();
+						break;
+				}
 			}
 		}
 
-		$role = 'student';
+
 		if(isset($this->get['role']))
 			$role = $this->get['role'];
 
-		$valid = $this->view->loadStartPage($role);
+		$valid = $this->view->loadStartPage($role,$err);
 
 		if(!$valid)
 		{
-			// TODO Include Error handling here
+			// TODO mabe remove this!
 			echo 'Error: undefined role';
 		}
 
@@ -148,48 +157,63 @@ class cController
 
 	private function createNewStudent()
 	{
-		// TODO check and set inputs here
 
-		$name = $this->post['student_name'];
-		$mail = $this->post['student_mail'];
+		$name = isset($this->post['student_name']) ? $this->post['student_name'] : false;
+		$matr = isset($this->post['student_matr']) ? $this->post['student_matr'] : false;
+		$email = isset($this->post['student_email']) ? $this->post['student_email'] : false;
+		$field = isset($this->post['student_fos']) ? $this->post['student_fos'] : false;
+		$degree = isset($this->post['student_degree']) ? array($this->post['student_degree']) : false;
+		$skills = isset($this->post['student_skills']) ? $this->post['student_skills'] : false;
 
-		//TODO get this from formular
-		$field = "Informatik";
 
-		$matr = $this->post['student_matr'];
+		if(!$name or !$matr or !$email or !$field or !$degree or !$skills)
+		{
+			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$degree,$skills,false);
+			return true;
+		}
 
-		// TODO transfere grade here
-		$grade = 1; //$this->post['student_grade'];
-
-		$this->model->createNewStudent($name, $mail, $field, $matr, $grade);
-		return 1;
+		return	$this->model->createNewStudent($name, $email, $field, $matr, $degree, $skills);
 	}
 
 	private function teacherLogin()
 	{
 		// TODO check teacher parameter here return 0 for fail 1 for teacher 2 for admin
-		$mail = $this->post['teacher_mail'];
-		$pw = $this->post['teacher_pw'];
-		return $this->model->getTeacherProperties($mail, $pw);
+		$email = isset($this->post['teacher_mail']) ? $this->post['teacher_mail'] : false;
+		$pw = isset($this->post['teacher_pw']) ? $this->post['teacher_pw'] : false;
+
+		if(!$email or !$pw)
+		{
+			$this->errorhandle->errLoginFail();
+			return true;
+		}
+
+		return $this->model->getTeacherProperties($email, $pw);
 	}
 
 	private function studentLogin()
 	{
-		// TODO what is not todo here
-		return $this->model->getStudentByCrypt($this->get['token']);
+		$token = isset($this->get['token']) ? $this->get['token'] : false;
+
+		if(!$token)
+		{
+			$this->errorhandle->errLoginFail();
+			return false;
+		}
+
+		return $this->model->getStudentByCrypt($token);
 	}
 
 	private function getConfig()
 	{
+		// TODO replace this by DOM!
 		if (file_exists('system\config\config.xml'))
 		{
 			$xml = simplexml_load_file('system\config\config.xml');
+			$this->stage = $xml->stage;
+			$this->deadline = $xml->deadline;
+			$this->view->setStage($xml->stage);
+			$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin);
 		}
-		// TODO return fatal error if file not exist
-		$this->stage = $xml->stage;
-		$this->deadline = $xml->deadline;
-		$this->view->setStage($xml->stage);
-		$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin);
 	}
 
 }

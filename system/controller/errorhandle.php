@@ -3,19 +3,19 @@
 class cErrorHandle
 {
 
-  private $err_msg;
-  private $err_page;
-  private $err_subpage;
-  private $err_page_id;
+  private $err_msg = null;
+  private $err_page = null;
+  private $err_subpage = null;
+  private $err_page_id = null;
 
-  private $store_name;
-  private $store_email;
-  private $store_matr;
-  private $store_title;
-  private $store_keywords;
-  private $store_abstract;
-  private $store_description;
-  private $store_field;
+  private $store_name = null;
+  private $store_email = null;
+  private $store_matr = null;
+  private $store_title = null;
+  private $store_keywords = null;
+  private $store_abstract = null;
+  private $store_description = null;
+  private $store_field = null;
 
   function __construct()
   {
@@ -103,6 +103,12 @@ class cErrorHandle
   {
     if(!$this->store_abstract) return false;
     return $this->store_description;
+  }
+
+  public function errLoginFail()
+  {
+    $this->err_msg = "Error: Die E-Mail Adresse oder das Passwort sind falsch <br>";
+    return true;
   }
 
   public function errBadId($form)

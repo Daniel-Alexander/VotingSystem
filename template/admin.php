@@ -1,15 +1,21 @@
+<div class="navbox">
+	<button class="dropNav" onclick="toggleNavigation()">Menu</button>
+	<nav class="navigation">
+		<ul>
+			<li>Navigation</li>
 
-<nav>
-	Main Menu<br>
-	<a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a><br>
-	<a href="redirect.php?page=teacher"><button class="navBtn">Teacher</button></a><br>
-	<a href="redirect.php?page=student"><button class="navBtn">Studenten</button></a><br>
-	<a href="redirect.php?page=voting"><button class="navBtn">Voting</button></a><br>
-	<a href="redirect.php?page=data"><button class="navBtn">Daten</button></a><br>
-	<a href="redirect.php?page=settings"><button class="navBtn">Settings</button></a><br>
-	<a href="redirect.php?logout=1"><button class="navBtn">Logout</button></a>
+			<li><a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a></li>
+			<li><a href="redirect.php?page=teacher"><button class="navBtn">Teacher</button></a></li>
+			<li><a href="redirect.php?page=student"><button class="navBtn">Studenten</button></a></li>
+			<li><a href="redirect.php?page=voting"><button class="navBtn">Voting</button></a></li>
+			<li><a href="redirect.php?page=data"><button class="navBtn">Daten</button></a></li>
+			<li><a href="redirect.php?page=settings"><button class="navBtn">Settings</button></a></li>
+			<li><a href="redirect.php?logout=1"><button class="navBtn">Logout</button></a></li>
+		</ul>
+			Rolle: <br>Administrator<br> Phase: <?php echo $this->getStageName();?>
+	</nav>
+</div>
 
-</nav>
 
 <div class="container">
 	<?php
@@ -29,7 +35,7 @@
 				$nwishes = $this->model->getNWish();
 				if(!$row)
 				{
-					echo "Error: call to non existing project id";
+					echo "<div class='errcontainer'>Error: call to non existing project id</div>";
 				}
 				else
 				{
@@ -41,7 +47,7 @@
 				$row = $this->model->getProjectById($this->page_id);
 				if(!$row)
 				{
-					echo "Error: call to non existing project id";
+					echo "<div class='errcontainer'>Error: call to non existing project id</div>";
 				}
 				else
 				{
@@ -50,7 +56,7 @@
 			}
 			else
 			{
-				echo "Call to non existing subpage";
+				echo "<div class='errcontainer'> Error: Call to non existing subpage</div>";
 				echo $this->subpage;
 			}
 		}
@@ -69,7 +75,7 @@
 				$row = $this->model->getTeacherById($this->page_id);
 				if(!$row)
 				{
-					echo "Error: call to non existing page_id";
+					echo "<div class='errcontainer'>Error: call to non existing page_id</div>";
 				}
 				else
 				{
@@ -81,7 +87,7 @@
 				$row = $this->model->getTeacherById($this->page_id);
 				if(!$row)
 				{
-					echo "Error: call to non existing page id";
+					echo "<div class='errcontainer'>Error: call to non existing page id</div>";
 				}
 				else
 				{
@@ -90,7 +96,7 @@
 			}
 			else
 			{
-				echo "Call to non existing subpage";
+				echo "<div class='errcontainer'>Error: Call to non existing subpage</div>";
 				echo $this->subpage;
 			}
 	 }
@@ -105,7 +111,7 @@
 					$row = $this->model->getStudentById($this->page_id);
 					if(!$row)
 					{
-						echo "Error: call to non existing page_id";
+						echo "<div class='errcontainer'>Error: call to non existing page_id</div>";
 					}
 					else
 					{
@@ -121,7 +127,7 @@
 				 $row = $this->model->getStudentById($this->page_id);
 				 if(!$row)
 				 {
-					 echo "Error: call to non existing page id";
+					 echo "<div class='errcontainer'>Error: call to non existing page id</div>";
 				 }
 				 else
 				 {
@@ -133,7 +139,7 @@
 				 $row = $this->model->getStudentById($this->page_id);
 				 if(!$row)
 				 {
-					 	echo "Error: call to non existing page id";
+					 	echo "<div class='errcontainer'>Error: call to non existing page id</div>";
 				 }
 				 else
 				 {
@@ -144,10 +150,15 @@
 			 }
 			 else
 			 {
-					echo "Call to non existing subpage";
+					echo "<div class='errcontainer'>Error: Call to non existing subpage</div>";
 	 				echo $this->subpage;
 			 }
 	 }
+   elseif(strcmp($this->page,'voting') === 0)
+	 {
+      $nwish = $this->model->getNWish();
+     include 'admin_voting.php';
+   }
 	 elseif(strcmp($this->page,'data') === 0)
 	 {
 				$own_id = $_SESSION['current_id'];
@@ -155,7 +166,7 @@
 
 				if(!$row)
 				{
-					echo "Error: call to non existing id";
+					echo "<div class='errcontainer'>Error: call to non existing id</div>";
 				}
 				else
 				{
@@ -168,7 +179,10 @@
 		}
 		else
 		{
-			echo "Error: Call to not existing page";
+			echo "<div class='errcontainer'>Error: Call to not existing page</div>";
 	 	}
 		?>
+
  </div>
+
+ <script src="js/navigation.js"></script>

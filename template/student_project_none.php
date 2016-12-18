@@ -51,7 +51,7 @@
   								echo ", ";
   							}
   							echo "</th>
-  							<th> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'>Anzeigen</th>
+  							<th> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'><button type='button' class='linkBtn'>Anzeigen</button></th>
 						  </tr>";
 			}
 			?>
