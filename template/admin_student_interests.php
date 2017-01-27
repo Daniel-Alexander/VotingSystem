@@ -52,13 +52,15 @@
   								echo ", ";
   							}
   							echo "</th>
-  							<th> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'><button class='linkBtn'>Anzeigen</button></th>
+  							<th> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'><button type='button' class='linkBtn'>Anzeigen</button></th>
 						  </tr>";
 			}
 			?>
 		</tbody>
   </table>
 
+<div class="one-third">
   <input type="submit" value="Speichern" name="student_save_interests">
+</div>
 </form>
 </div>

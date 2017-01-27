@@ -19,7 +19,7 @@
     </div>
     <br>
     <div class="two-thirds">
-      <label for="id1">Keywords</label>
+      <label for="id1">Stichwörter</label>
       <input type="text" required name="project_keywords" value="<?php echo $row['keywords'] ?>" placeholder="Keywords">
     </div>
     <br>
@@ -44,32 +44,42 @@
       ?>
     </div>
     <br>
-    <div class="two-thirds">
+    <div class="one-third">
       <input type="submit" value="Bearbeitung speichern" name="edit_project">
     </div>
+    <hr>
   </form>
-  <br>
-  <div class="two-thirds">
-  <h1>Betreuer</h1><br>
+  <div class="one-third">
+  <!--h1>Projektbetreuer</h1><br-->
   <form action="redirect.php?page=project" method="post">
     <input type="hidden" value="<?php echo $this->page_id ?>" name="project_id">
-    <?php
 
+    <table>
+      <thead><tr><th>Projektbetreuer</th></tr></thead>
+      <table><tbody>
+    <?php
       $teacher = $this->model->getTeacherByProject($row["order_id"]);
       $ind = 0;
+
       foreach($teacher[0] as $name)
       {
+        echo "<tr><td>";
         echo $name;
+        echo "</td><td>";
         echo "<input type='checkbox' value=".$teacher[1][$ind]." name='teacher_to_remove[]'>";
-        echo "<br>";
+        echo "</td></tr>";
         $ind += 1;
       }
 
     ?>
+      </tbody>
+    </table>
     <input type="submit" value="Betreuer entfernen" name="project_remove_teacher">
   </form>
-  <br>
-  Betreuer hinzufügen
+</div>
+<hr>
+<div class="one-third">
+  <h1>Betreuer hinzufügen</h1>
   <form action="redirect.php?page=project" method="post">
     <input type="hidden" value="<?php echo $this->page_id ?>" name="project_id">
     <select name="teacher_to_add">

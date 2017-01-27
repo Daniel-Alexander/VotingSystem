@@ -1083,7 +1083,7 @@ class cModel
 	public function getAssistAndDeadline()
 	{
 		$xml = new DOMDocument();
-		$xml->load("system/config/config.xml");
+		$xml->load("/users/alpha-voting/www/system/config/config.xml");
 		if(!$xml) return false; // TODO return fatal error here
 
 		$assistent = $xml->documentElement->getElementsByTagName("assistent")->item(0)->textContent;
@@ -1097,8 +1097,12 @@ class cModel
 	{
 		// TODO validate inputs!!!!
 		$xml = new DOMDocument();
-		$xml->load("system/config/config.xml");
-		if(!$xml) return false; // TODO return fatal error here
+		$xml->load("/users/alpha-voting/www/system/config/config.xml");
+		if(!$xml)
+		{
+			return false; // TODO return fatal error here
+			
+		}
 
 		switch($config)
 		{
@@ -1178,10 +1182,9 @@ class cModel
 				break;
 		}
 
-		$xml->save("system/config/config.xml");
-
+		echo $xml->save("/users/alpha-voting/www/system/config/config2.xml");
 		// INFO ..done reload system now
-		header("Location: redirect.php?page=settings");
+		//header("Location: redirect.php?page=settings");
 	}
 
 }

@@ -9,7 +9,7 @@ class cTranslate
 	}
 
 	public function degree2num($deg_array)
-	{		
+	{
 		if(count($deg_array) > 1)
 		{
 			// FIXME No synthax correction here
@@ -94,6 +94,5 @@ class cTranslate
 		}
 		return $str;
 	}
-
 
 }

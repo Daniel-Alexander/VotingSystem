@@ -19,12 +19,19 @@
 			{
 				echo "<tbody>
 						<tr>
-							<th>".$row["full_name"]."</th>
-							<th>".$row["email"]."</th>
-              <th>".$row["active"]."</th>
-							<th>";
+							<td>".$row["full_name"]."</td>
+							<td>".$row["email"]."</td>";
 
-							echo "<a href='redirect.php?page=student&subpage=show&page_id=".$row['student_id']."'><button class='linkBtn'>Ansehen</button></a></th>
+				if($row["active"])
+				{
+					echo "<td><img src='style/img/active24.ico' alt='active'></td>";
+				}
+				else
+				{
+					echo "<td><img src='style/img/deactive24.ico' alt='active'></td>";
+				}
+
+							echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$row['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>
 						</tr>
 					</tbody>";
 			}

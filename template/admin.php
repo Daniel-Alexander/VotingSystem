@@ -2,17 +2,18 @@
 	<button class="dropNav" onclick="toggleNavigation()">Menu</button>
 	<nav class="navigation">
 		<ul>
-			<li>Navigation</li>
+			<li class="head">Navigation</li>
 
 			<li><a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a></li>
-			<li><a href="redirect.php?page=teacher"><button class="navBtn">Teacher</button></a></li>
+			<li><a href="redirect.php?page=teacher"><button class="navBtn">Betreuer</button></a></li>
 			<li><a href="redirect.php?page=student"><button class="navBtn">Studenten</button></a></li>
 			<li><a href="redirect.php?page=voting"><button class="navBtn">Voting</button></a></li>
 			<li><a href="redirect.php?page=data"><button class="navBtn">Daten</button></a></li>
 			<li><a href="redirect.php?page=settings"><button class="navBtn">Settings</button></a></li>
-			<li><a href="redirect.php?logout=1"><button class="navBtn">Logout</button></a></li>
-		</ul>
-			Rolle: <br>Administrator<br> Phase: <?php echo $this->getStageName();?>
+			<li><a href="redirect.php?logout=1"><button class="navBtn">Ausloggen</button></a></li>
+
+			<li class="foot">Rolle: <br>Administrator<br> Phase: <?php echo $this->getStageName();?></li>
+			</ul>
 	</nav>
 </div>
 

@@ -4,6 +4,7 @@ class cView
 {
 	private $path = 'template';
 	private $error = false;
+	private $success = false;
   private $template = null;
 	private $container = null;
 	private $role = null;
@@ -151,6 +152,11 @@ class cView
 			return 1;
 		}
 		return 0;
+	}
+
+	public function SetSignedInProperty()
+	{
+		$this->success = true;
 	}
 
 	public function loadTemplate()

@@ -21,15 +21,15 @@
         {
           echo 	"<tbody>
                 <tr>
-                  <th>".$row["full_name"]."</th>
-                  <th>".$row["email"]."</th>";
+                  <td>".$row["full_name"]."</td>
+                  <td>".$row["email"]."</td>";
               if ($row["teacher_id"] == $_SESSION["current_id"])
               {
-                echo "<th><a href='redirect.php?page=data'><button class='linkBtn'>Anzeigen</button></a></th>";
+                echo "<td><a href='redirect.php?page=data'><button class='linkBtn'>Anzeigen</button></a></td>";
               }
               else
               {
-                echo "<th><a href='redirect.php?page=teacher&subpage=show&page_id=".$row["teacher_id"]."'><button class='linkBtn'>Anzeigen</button></a></th>";
+                echo "<td><a href='redirect.php?page=teacher&subpage=show&page_id=".$row["teacher_id"]."'><button class='linkBtn'>Anzeigen</button></a></td>";
               }
           echo "</tr>
               </tbody>";

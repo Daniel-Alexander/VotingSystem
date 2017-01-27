@@ -1,5 +1,7 @@
 <div class="one">
   <?php if($this->error) echo $this->errorhandle->getErrMsg() ?>
+  <?php if($this->stage != 1){ echo "<div class='infoBox'>Aktion in der aktuellen Phase nicht möglich</div>";
+  } else { ?>
   <form action="redirect.php?page=project" method="post">
     <div class="two-thirds">
       <h2>Projekt bearbeiten</h2>
@@ -44,30 +46,30 @@
       ?>
     </div>
     <br>
-    <div class="two-thirds">
+    <div class="one-third">
       <input type="submit" value="Bearbeitung speichern" name="edit_project">
     </div>
   </form>
-  <br>
-  <div class="two-thirds">
-  <h1>Betreuer</h1><br>
+  <hr>
+  <div class="one-third">
+  <table>
+    <thead><tr><th>Betreuer</th></tr></thead>
+    <tboby>
     <?php
-
       $teacher = $this->model->getTeacherByProject($row["order_id"]);
       $ind = 0;
       foreach($teacher[0] as $name)
       {
-        echo $name;
-        echo "<br>";
+        echo "<tr><td>".$name."</td></tr>";
       }
-
     ?>
+    </tbody></table>
   <form action="redirect.php?page=project" method="post">
     <input type="hidden" value="<?php echo $this->page_id ?>" name="project_id">
     <input type="submit" value="Mich von diesem Projekt entfernen" name="project_remove_me">
   </form>
   <br>
-  Betreuer hinzufügen
+  <h1>Betreuer hinzufügen</h1>
   <form action="redirect.php?page=project" method="post">
     <input type="hidden" value="<?php echo $this->page_id ?>" name="project_id">
     <select name="teacher_to_add">
@@ -81,4 +83,5 @@
     <input type="submit" value="Betreuer hinzufügen" name="project_add_teacher">
   </form>
   </div>
+<?php } ?>
 </div>

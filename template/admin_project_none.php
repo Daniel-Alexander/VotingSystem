@@ -8,7 +8,6 @@
 		<thead>
 			<tr>
 				<th>Titel</th>
-				<th>Abstarkt</th>
 				<th>Betreuer</th>
 				<th></th>
 			</tr>
@@ -19,17 +18,16 @@
 			{
 				echo "<tbody>
 						<tr>
-							<th>".$row["titel"]."</th>
-							<th>".$row["abstract"]."</th>
-							<th>";
+							<td>".$row["titel"]."</td>
+							<td>";
 							$teacher = $this->model->getTeacherByProject($row["order_id"]);
 							foreach($teacher[0] as $name)
 							{
 								echo $name;
 								echo ", ";
 							}
-							echo "</th>
-							<th> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'><button class='linkBtn'>Anzeigen</button></th>
+							echo "</td>
+							<td> <a href='redirect.php?page=project&subpage=show&page_id=".$row["project_id"]."'><button class='linkBtn'>Anzeigen</button></td>
 						</tr>
 					</tbody>";
 			}

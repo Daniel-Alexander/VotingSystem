@@ -27,38 +27,40 @@
   }
 ?>
 <hr>
+<div class="one-half">
 <h1>Interessiert an: </h1>
-
+<table><tbody>
 <?php
 $projects = $this->model->getStudentInterests($this->page_id);
 if(!$projects)
 {
-  echo "<tr>Noch keine Interessen hinterlegt</tr>";
+  echo "<tr><td>Noch keine Interessen hinterlegt</td></tr>";
 }
 else
 {
   if($projects["project1_id"] != 0)
   {
-    echo "1. Wunsch: ";
+    echo "<tr><td>1. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project1_id"]);
-    echo $prj["titel"];
-    echo $projects["project1_id"];
-    echo "<br>";
+    echo "<td>".$prj["titel"]."</td>";
+    echo "</tr>";
   }
   if($projects["project2_id"] != 0)
   {
-    echo "2. Wunsch: ";
+    echo "<tr><td>2. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project2_id"]);
-    echo $prj["titel"];
-    echo $projects["project2_id"];
-    echo "<br>";
+    echo "<td>".$prj["titel"]."</td>";
+    echo "</tr>";
   }
   if($projects["project3_id"] != 0)
   {
-    echo "3. Wunsch: ";
+    echo "<tr><td>3. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project3_id"]);
-    echo $prj["titel"];
+    echo "<td>".$prj["titel"]."</td>";
+    echo "</tr>";
   }
 }
 ?>
+</tbody></table>
+</div>
 </div>

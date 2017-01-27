@@ -44,7 +44,7 @@
       ?>
     </div>
     <br>
-    <div class="two-thirds">
+    <div class="one-third">
       <input type="submit" value="Änderungen speichern" name="edit_student">
     </div>
   </form>

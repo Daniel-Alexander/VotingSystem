@@ -59,9 +59,9 @@ body {
 
     color: #fff;
 }
-.header .text{
-  display:inline;
-  vertical-align: middle;
+
+.header .logo{
+  padding:5px 0px;
 }
 
 .navbox {
@@ -81,6 +81,7 @@ body {
 }
 
 .navigation{
+  font-family: 'Open Sans Condensed', sans-serif;
   transform: translateY(0);
 }
 
@@ -112,9 +113,6 @@ footer {
 	background-color: #00BFFF;
 }
 
-
-
-
 .navBtn {
 	width:80%;
 	height: 38px;
@@ -122,7 +120,7 @@ footer {
 	text-align: center;
 	cursor: pointer;
 	border: 0px;
-	border-bottom: 1px solid black;
+	border-bottom: 1px dashed #eee;
 	margin-left:10%;
 	margin-right:10%;
 }
@@ -140,7 +138,7 @@ footer {
 }
 
 .navBtn:hover {
-	background-color: rgba(255,255,255,0.5);
+	background-color: rgba(131,139,139,0.5);
 	outline: 0;
 }
 
@@ -177,9 +175,13 @@ input[type="button"] {
 	margin-right:10%;*/
 }
 
+input[type="submit"]:disabled {
+  text-decoration: line-through;
+}
+
 textarea {
 	width:100%;
-	height: 76px;
+	min-height: 100px;
 	padding: 6px 10px;
 	background-color: #fff;
 	border: 1px solid #D1D1D1;
@@ -187,7 +189,7 @@ textarea {
 	box-shadow: none;
 	box-sizing: border-box;
 	margin-bottom: 6px;
-    margin-top: 6px;
+  margin-top: 6px;
 }
 
 select,
@@ -229,10 +231,14 @@ table {
 
 th,
 td {
-  min-width: 100px;
+  min-width: 10px;
 	padding: 12px 15px;
 	text-align: left;
 	border-bottom: 1px solid #E1E1E1;
+}
+
+.radiofield {
+  width: 10px;
 }
 
 th:first-child,
@@ -369,7 +375,17 @@ ul {
 	list-style: none;
 }
 
+li.head {
+  padding-top:20px;
+  padding-bottom:20px;
+  font-size:20px;
+}
 
+li.foot {
+  padding-top:20px;
+  padding-bottom:20px;
+  font-size:15px;
+}
 
 @media screen and (max-width: 800px) {
 

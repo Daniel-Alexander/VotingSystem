@@ -32,54 +32,61 @@
     }
     ?>
     <hr>
-
+    <?php if($this->stage != 1) echo "<div class='infoBox'>In der Aktuellen Phase können Projekte nur vom Administrator geändert werden</div>";?>
   <div class="one-third">
-    <a href="redirect.php?page=project&subpage=edit&page_id=<?php echo $this->page_id ?>"><button class="linkBtn">Bearbeiten</button></a>
+    <a href="redirect.php?page=project&subpage=edit&page_id=<?php echo $this->page_id ?>"><button class="linkBtn" <?php if($this->stage != 1) echo "disabled"; ?>>Bearbeiten</button></a>
   </div>
   <div class="one-third">
     <form action="redirect.php?page=project" method="post">
       <input type="hidden" value="<?php echo $this->page_id ?>" name="project_to_delete">
-      <input type="submit" value="Löschen" name="delete_project">
+      <input type="submit" value="Löschen" name="delete_project" <?php if($this->stage != 1) echo "disabled"; ?>>
     </form>
   </div>
   <hr>
+  <div class="one-half">
   <h1>Interessenten: </h1>
+  <table><thead><tr><th>Erstwunsch</th><th></th></tr></thead>
+  <tbody>
   <?php
-    echo "<h1>Erstwunsch: </h1>";
     $this->model->startQuery("first_interests",$row['project_id']);
 
     while($stdnt = $this->model->getRow())
     {
       $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-      //echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
-      echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>".$stdnt_name['full_name']."</button></a></div></th>";
-      echo "<br>";
+      echo "<tr><td>".$stdnt_name['full_name']."</td>";
+      echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+      echo "</tr>";
     }
+    echo "</tbody></table>";
+
     if($nwishes > 1)
     {
-      echo "<h1>Zweitwunsch: </h1>";
+      echo "<table><thead><tr><th>Zweitwunsch</th><th></th></tr></thead>
+            <tbody>";
       $this->model->startQuery("second_interests",$row['project_id']);
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
-        echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></div></th>";
-        echo "<br>";
+        echo "<tr><td>".$stdnt_name['full_name']."</td>";
+        echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+        echo "</tr>";
       }
+      echo "</tbody></table>";
     }
     if($nwishes > 2)
     {
-      echo "<h1>Drittwunsch: </h1>";
+      echo "<table><thead><tr><th>Drittwunsch</th><th></th></tr></thead>
+            <tbody>";
       $this->model->startQuery("third_interests",$row['project_id']);
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo "<div class='one-third'>".$stdnt_name['full_name']."</div>";
-        echo "<div class='one-third'><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></div></th>";
-        echo "<br>";
+        echo "<tr><td>".$stdnt_name['full_name']."</td>";
+        echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+        echo "</tr>";
       }
+      echo "</tbody></table>";
     }
-
-
   ?>
+  </div>
 </div>

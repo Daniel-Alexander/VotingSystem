@@ -2,13 +2,15 @@
 	<button class="dropNav" onclick="toggleNavigation()">Menu</button>
 	<nav class="navigation">
 		<ul>
-			<li>Navigation</li>
+			<li class="head">Navigation</li>
 
 			<li><a href="redirect.php?page=project"><button class="navBtn">Projekte</button></a></li>
+			<li><a href="redirect.php?page=voting"><button class="navBtn">Voting</button></a></li>
 			<li><a href="redirect.php?page=data"><button class="navBtn">Daten</button></a></li>
 			<li><a href="redirect.php?logout=1"><button class="navBtn">Ausloggen</button></a></li>
+
+			<li class="foot">Rolle: <br>Betreuer<br> Phase: <?php echo $this->getStageName();?></li>
 		</ul>
-			Rolle: <br>Betreuer<br> Phase: <?php echo $this->getStageName();?>
 		</nav>
 </div>
 
@@ -57,6 +59,11 @@
 			echo $this->subpage;
 		}
  	}
+	elseif(strcmp($this->page,'voting') === 0)
+	{
+		$nwish = $this->model->getNWish();
+		include 'teacher_voting.php';
+	}
 	elseif(strcmp($this->page,'student') === 0)
 	{
 		$row = $this->model->getStudentById($this->page_id);

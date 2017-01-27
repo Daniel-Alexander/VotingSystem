@@ -1,3 +1,0 @@
-# VotingSystem
-
-Projektpraktikum Automatisierungstechnik

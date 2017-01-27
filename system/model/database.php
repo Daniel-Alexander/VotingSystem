@@ -304,12 +304,11 @@ class cDatabase
 		if(!$this->connected)
 			$this->connect();
 
-			$sql = "SELECT student.student_id, student.full_name FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project".$wish."_id = '".$project_id."'";
+			$sql = "SELECT student.student_id, student.full_name FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project".$wish."_id = '".$project_id."' AND student.active=1";
 			$result = mysql_query($sql) or die(mysql_error());
 
 			if(mysql_num_rows($result) > 0 )
 			{
-
 				$students = array(array(),array());
 				while ($row = mysql_fetch_assoc($result))
 				{
@@ -330,8 +329,55 @@ class cDatabase
 			}
 
 			else return false;
+	}
 
+	public function getStudentsWithoutRequest($nRequests)
+	{
+		// TODO return error code here
+		if(!$this->connected)
+			$this->connect();
 
+			$sql = "SELECT student.student_id, student.full_name, '1' as request FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE (student_order.project1_id = '0' AND student.active=1)";
+
+			if($nRequests > 1)
+			{
+				$sql = $sql."UNION ALL SELECT student.student_id, student.full_name, '2' as request FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE (student_order.project2_id = '0' AND student.active=1)";
+			}
+
+			if($nRequests > 2)
+			{
+				$sql = $sql."UNION ALL SELECT student.student_id, student.full_name, '3' as request FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE (student_order.project3_id = '0' AND student.active=1)";
+			}
+
+			$result = mysql_query($sql) or die(mysql_error());
+
+			if(mysql_num_rows($result) > 0 )
+			{
+				$students = array(array(),array(),array());
+				while ($row = mysql_fetch_assoc($result))
+				{
+					array_push($students[0],$row["student_id"]);
+					array_push($students[1],$row["full_name"]);
+					array_push($students[2],$row["request"]);
+				}
+				return $students;
+			}
+			return false;
+
+	}
+
+	public function updateVotingTable($table)
+	{
+		// TODO use error code here
+		if(!$this->connected)
+			$this->connect();
+
+			$max = count($table);
+			for ($i=0; $i < $max; $i++)
+			{
+				$sql = "UPDATE student_order SET project1_id = '".$table[$i][1]."', project2_id = '".$table[$i][2]."', project3_id = '".$table[$i][3]."' WHERE student_id = '".$table[$i][0]."'";
+				mysql_query($sql) or die(mysql_error());
+			}
 	}
 
 	public function insertNewProject($titel, $keywords, $abstract, $description, $degree, $skills, $teacher_id)

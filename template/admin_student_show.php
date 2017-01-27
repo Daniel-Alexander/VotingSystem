@@ -3,10 +3,20 @@
 <?php echo $row['full_name'] ?><br>
 <hr>
 <h1>Aktiv: </h1>
-<?php echo $row['active'] ?><br>
 <form action="redirect.php?page=student&subpage=show&page_id=<?php echo $this->page_id; ?>" method="post">
   <input type="hidden" value="<?php echo $this->page_id ?>" name="student_to_toggle">
-  <input type="submit" value="Aktivieren" name="student_toggle_active">
+  <?php
+    if($row["active"])
+    {
+      echo "<div class='one-third'><img src='style/img/active24.ico' alt='active'></div>";
+      echo "<div class='one-third'><input type='submit' value='Deaktivieren' name='student_toggle_active'></div>";
+    }
+    else
+    {
+      echo "<div class='one-third'><img src='style/img/deactive24.ico' alt='active'></div>";
+      echo "<div class='one-third'><input type='submit' value='Aktivieren' name='student_toggle_active'></div>";
+    }
+  ?>
 </form>
 <hr>
 <h1>Matrikelnummer: </h1>
@@ -39,43 +49,47 @@ localhost/voting/index.php?token=<?php echo $row['crypt_id'] ?></u>
   }
 ?>
 <hr>
-<h1>Interessiert an: </h1>
-
+<div class="one-half">
+<table><thead><tr><th>Interessiert an: </th><th></th><th></th></thead>
+</tbody>
 <?php
 $projects = $this->model->getStudentInterests($this->page_id);
 if(!$projects)
 {
-  echo "<tr>Noch keine Interessen hinterlegt</tr>";
+  echo "<tr><td>Noch keine Interessen hinterlegt</td><td></td><td></td></tr></tbody></table>";
 }
 else
 {
   if($projects["project1_id"] != 0)
   {
-    echo "1. Wunsch: ";
+    echo "<tr><td>1. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project1_id"]);
-    echo $prj["titel"];
-    echo $projects["project1_id"];
-    echo "<a href='redirect.php?page=project&subpage=show&page_id=".$projects['project1_id']."'><button class='linkBtn'>Anzeigen</button></a>";
-    echo "<br>";
+    echo "<td>".$prj["titel"]."</td>";
+    echo "<td><a href='redirect.php?page=project&subpage=show&page_id=".$projects['project1_id']."'><button class='linkBtn'>Anzeigen</button></a>";
+    echo "</td>";
   }
   if($projects["project2_id"] != 0)
   {
-    echo "2. Wunsch: ";
+    echo "<tr><td>2. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project2_id"]);
-    echo $prj["titel"];
-    echo $projects["project2_id"];
-    echo "<a href='redirect.php?page=project&subpage=show&page_id=".$projects['project2_id']."'><button class='linkBtn'>Anzeigen</button></a>";
-    echo "<br>";
+    echo "<td>".$prj["titel"]."</td>";
+    echo "<td><a href='redirect.php?page=project&subpage=show&page_id=".$projects['project2_id']."'><button class='linkBtn'>Anzeigen</button></a>";
+    echo "</td>";
   }
   if($projects["project3_id"] != 0)
   {
-    echo "3. Wunsch: ";
+    echo "<tr><td>3. Wunsch</td>";
     $prj = $this->model->getProjectById($projects["project3_id"]);
-    echo $prj["titel"];
-    echo "<a href='redirect.php?page=project&subpage=show&page_id=".$projects['project3_id']."'><button class='linkBtn'>Anzeigen</button></a>";
+    echo "<td>".$prj["titel"]."</td>";
+    echo "<td><a href='redirect.php?page=project&subpage=show&page_id=".$projects['project3_id']."'><button class='linkBtn'>Anzeigen</button></a>";
+    echo "</td>";
   }
+  echo "</tbody></table>";
 }
 ?>
+
+</div>
+<br>
 <div class="one-third">
   <a href='redirect.php?page=student&subpage=interests&page_id=<?php echo $row["student_id"] ?>'><button class='linkBtn'>Wünsche Bearbeiten</button></a>
 </div>

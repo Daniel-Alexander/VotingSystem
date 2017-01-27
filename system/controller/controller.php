@@ -79,6 +79,12 @@ class cController
 		$err = false;
 		$role = 'student';
 
+		if(isset($this->get['signout']))
+		{
+				$this->view->loadLogoutPage(true);
+				return;
+		}
+
 		if(isset($this->get['token']))
 		{
 			// INFO token gets validated in model
@@ -101,6 +107,10 @@ class cController
 		if(isset($this->post['create_new_student']))
 		{
 			$err = $this->createNewStudent();
+			if(!$err)
+			{
+				$this->view->SetSignedInProperty();
+			}
 		}
 
 		if(isset($this->post['teacher_login']))
@@ -129,7 +139,6 @@ class cController
 						//return false;
 						break;
 					default: // fail
-						echo "hierr";
 						$err = $this->errorhandle->errLoginFail();
 						break;
 				}
@@ -212,7 +221,7 @@ class cController
 			$this->stage = $xml->stage;
 			$this->deadline = $xml->deadline;
 			$this->view->setStage($xml->stage);
-			$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin);
+			$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin, $xml->stage);
 		}
 	}
 

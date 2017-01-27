@@ -17,7 +17,7 @@
   <input type="text" required name="new_teacher_pw" placeholder="Init Pw">
 </div>
 <br>
-<div class="two-thirds">
+<div class="one-third">
   <input type="submit" value="Hinzufügen" name="create_new_teacher">
 </div>
 </form>

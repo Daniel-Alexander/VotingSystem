@@ -38,7 +38,7 @@
       ?>
     </div>
     <br>
-    <div class="two-thirds">
+    <div class="one-third">
       <input type="submit" value="Projekt erstellen" name="create_new_project">
     </div>
   </form>

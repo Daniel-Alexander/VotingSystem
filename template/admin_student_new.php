@@ -38,7 +38,7 @@
       ?>
     </div>
     <br>
-    <div class="two-thirds">
+    <div class="one-third">
       <input type="submit" value="Hinzufügen" name="add_new_student">
     </div>
   </form>

@@ -5,9 +5,9 @@
     </head>
     <body>
       <div class="header">
-      	<span class="text">
+      	<div class="logo">
       		Votingsystem
-      	</span>
+      	</div>
       </div>
         <div id="login-wrapper">
             <div class="login_container">

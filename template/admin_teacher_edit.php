@@ -12,7 +12,8 @@
       <label for="id1">E-Mail</label>
       <input type="text" required name="edit_teacher_mail" value="<?php echo $row["email"] ?>" placeholder="Mail">
     </div>
-    <div class="two-thirds">
+    <br>
+    <div class="one-third">
       <input type="submit" value="Änderung speichern" name="edit_teacher">
     </div>
   </form>
@@ -28,7 +29,8 @@
       <label for="id1">Passwort wiederholen</label>
       <input type="text" required name="edit_teacher_pw_2" placeholder="Wiederholen">
     </div>
-    <div class="two-thirds">
+    <br>
+    <div class="one-third">
       <input type="submit" value="Passwort speichern" name="edit_teacher_pw">
     </div>
   </form>
