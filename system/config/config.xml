@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <config>
-	<admin>11</admin>
-	<stage>4</stage>
-	<deadline>16.02.2017</deadline>
+	<admin>1</admin>
+	<stage>1</stage>
+	<deadline>16.02.2018</deadline>
 	<nwish>2</nwish>
-	<assistent>Testmail@irgendwo.com</assistent>
+	<assistent>daniel.thomanek@campus.tu-berlin.de</assistent>
 
 
-<skill><sign>1</sign><name>Softwarekenntnisse</name></skill><skill><sign>3</sign><name>Programmierkentnisse</name></skill><skill><sign>2</sign><name>Softskills</name></skill><skill><sign>4</sign><name>Softwarekenntnisse</name></skill></config>
+<skill><sign>1</sign><name>Softwarekenntnisse</name></skill><skill><sign>3</sign><name>Programmierkentnisse</name></skill><skill><sign>2</sign><name>Softskills</name></skill><skill><sign>4</sign><name>Hardwarekenntnisse</name></skill></config>

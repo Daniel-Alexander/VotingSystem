@@ -8,19 +8,17 @@
 		<thead>
 			<tr>
 				<th>Titel</th>
-				<th>Abstarkt</th>
 				<th>Betreuer</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			<?php $this->model->startQuery('projects',$_SESSION['current_id']);
+			<?php $this->model->startQuery('projects',$this->model->getTeacherId());//$_SESSION['current_id']);
 			while($row = $this->model->getRow())
 			{
 				echo "<tbody>
 						<tr>
 							<td>".$row["titel"]."</td>
-							<td>".$row["abstract"]."</td>
 							<td>";
 							$teacher = $this->model->getTeacherByProject($row["order_id"]);
 							foreach($teacher[0] as $name)

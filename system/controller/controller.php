@@ -1,8 +1,10 @@
 <?php
 
+require_once 'system/controller/session.php';
 require_once 'system/model/model.php';
 require_once 'system/view/view.php';
 require_once 'system/controller/errorhandle.php';
+
 
 class cController
 {
@@ -13,27 +15,51 @@ class cController
 	private $errorhandle = null;
 	private $stage = null;
 	private $deadline = null;
+	private $inSession = null;
+	private $session = null;
 
 	function __construct($get, $post)
 	{
 		$this->get = $get;
 		$this->post = $post;
+		$this->inSession = false;
 		$this->errorhandle = new cErrorHandle();
 		$this->model = new cModel($this->errorhandle);
 		$this->view = new cView($this->model,$this->errorhandle);
+		
 		$this->getConfig();
+	}
+
+	function joinSession($session)
+	{
+		if(!$this->inSession)
+		{
+			if(!$session)
+			{
+				$this->session = new cSession();
+				$this->session->start();
+				$this->inSession = true;
+			}
+			else
+			{
+				$this->session = $session;
+				$this->inSession = true;
+			}
+		}
 	}
 
 	function redirectSession()
 	{
+		if(!$this->inSession) return false;
+
 		if(isset($this->get['logout']))
 		{
-			// TODO replace this by secure function
-			session_destroy();
+			$this->session->destroy();
 			$this->view->loadLogoutPage(false);
 			return false;
 		}
 
+		$this->model->joinSession($this->session);
 		//$this->view->setModel($this->model);
 
 		$page = 'main';
@@ -47,7 +73,7 @@ class cController
 			$page_id = $this->get['page_id'];
 
 
-		switch($_SESSION['role'])
+		switch($this->session->getRole())
 		{
 			case 2: // Admin
 
@@ -65,8 +91,7 @@ class cController
 				$this->view->loadStudentPage($page,$subpage,$page_id,$err);
 				break;
 			default: // fail
-				// TODO replace this by secure function
-				session_destroy();
+				$this->session->destroy();
 				$this->view->loadLogoutPage(false);
 				break;
 		}
@@ -93,18 +118,22 @@ class cController
 
 			if($student_id !== false)
 			{
-				// TODO replace this by secure function
-				session_start();
-				$_SESSION['valid'] = 1;
-				$_SESSION['role'] = 0;
-				$_SESSION['student_id'] = $student_id;
-
-				header('Location: redirect.php');
+				$this->joinSession(false);
+				$this->session->start();
+				$this->session->setValid(0, $student_id);
+				if($this->stage == 4)
+				{
+					header('Location: redirect.php?page=voting');
+				}
+				else
+				{
+					header('Location: redirect.php');
+				}
 				return false;
 			}
 		}
 
-		if(isset($this->post['create_new_student']))
+		if(isset($this->post['create_new_student']) && $this->stage == 2)
 		{
 			$err = $this->createNewStudent();
 			if(!$err)
@@ -115,7 +144,6 @@ class cController
 
 		if(isset($this->post['teacher_login']))
 		{
-
 			$stage = $this->teacherLogin();
 
 			if(!$stage)
@@ -129,11 +157,9 @@ class cController
 				{
 					case 2: // Admin
 					case 1: // teacher
-						// TODO replace this by secure function
-						session_start();
-						$_SESSION['valid'] = 1;
-						$_SESSION['role'] = $stage[0];
-						$_SESSION['current_id'] = $stage[1];
+						$this->joinSession(false);
+						$this->session->start();
+						$this->session->setValid($stage[0], $stage[1]);
 
 						header('Location: redirect.php');
 						//return false;
@@ -154,7 +180,7 @@ class cController
 		if(!$valid)
 		{
 			// TODO mabe remove this!
-			echo 'Error: undefined role';
+			//echo 'Error: undefined role';
 		}
 
 	}
@@ -215,14 +241,28 @@ class cController
 	private function getConfig()
 	{
 		// TODO replace this by DOM!
-		if (file_exists('system\config\config.xml'))
+		if (file_exists('system/config/config.xml'))
 		{
-			$xml = simplexml_load_file('system\config\config.xml');
+			$xml = simplexml_load_file('system/config/config.xml');
 			$this->stage = $xml->stage;
 			$this->deadline = $xml->deadline;
+			if($this->stage == 2)
+			{
+				$deadline = explode(".",$this->deadline);
+				$date = $deadline[2]."-".$deadline[1]."-".$deadline[0]." 00:00:00";
+
+				$today = date("Y-m-d H:i:s");
+				if ($date < $today)
+				{
+					$this->stage = 3;
+					$xml->stage = 3;
+					$xml->asXml('system/config/config.xml');
+				}
+			}
 			$this->view->setStage($xml->stage);
-			$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin, $xml->stage);
+			$this->model->setConfig($xml->nwish, $xml->skill, $xml->admin, $xml->stage, $xml->assistent);
 		}
+
 	}
 
 }

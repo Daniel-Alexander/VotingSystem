@@ -1,4 +1,4 @@
-<div class="one">
+﻿<div class="one">
 <h1>Name: </h1>
 <?php echo $row['full_name'] ?><br>
 <hr>
@@ -26,8 +26,8 @@
 <?php echo $row['email'] ?><br>
 <hr>
 <h1>Link: </h1>
-<a href='index.php?token=<?php echo $row['crypt_id'] ?>'><u>
-localhost/voting/index.php?token=<?php echo $row['crypt_id'] ?></u>
+<a href='<?php echo $this->url; ?>index.php?token=<?php echo $row['crypt_id'] ?>'><u>
+<?php echo $this->url; ?>index.php?token=<?php echo $row['crypt_id'] ?></u>
 </a><br>
 <hr>
 <h1>Studiengang: </h1>

@@ -1,4 +1,5 @@
-<html>
+﻿<html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
     <head>
         <title>Voting System</title>
         <link rel="stylesheet" href="style/style.css" />
@@ -28,13 +29,13 @@
             {?>
 					<form action="index.php" method="post">
 						<label for="id1">Name</label>
-						<input type="text" required name="student_name" id="id1">
+						<input type="text" required name="student_name" id="id1" <?php if($this->error) echo $this->errorhandle->getStoredName(); ?>>
             <label for="id1">Matrikelnummer</label>
-						<input type="text" required name="student_matr" id="id1">
+						<input type="text" required name="student_matr" id="id1" <?php if($this->error) echo $this->errorhandle->getStoredMatr(); ?>>
             <label for="id1">E-Mail Adresse</label>
-						<input type="text" required name="student_email" id="id1">
+						<input type="text" required name="student_email" id="id1" <?php if($this->error) echo $this->errorhandle->getStoredEmail(); ?>>
             <label for="id1">Studiengang</label>
-						<input type="text" required name="student_fos" id="id1">
+						<input type="text" required name="student_fos" id="id1" <?php if($this->error) echo $this->errorhandle->getStoredField(); ?>>
 						<input type="radio" required name="student_degree" value="Bsc"> B.sc.
 						<input type="radio" required name="student_degree" value="Msc"> M.sc. <br>
             <label for="id1">Kenntnisse</label><br>

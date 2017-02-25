@@ -3,6 +3,9 @@
 require_once 'system/model/database.php';
 require_once 'system/model/translate.php';
 require_once 'system/model/whitelist.php';
+require_once 'system/model/sendMail.php';
+require_once 'system/controller/session.php';
+
 
 class cModel
 {
@@ -14,6 +17,10 @@ class cModel
 	private $nwish = null;
 	private $skills = null;
 	private $admin = null;
+	private $inSession = null;
+	private $session = null;
+	private $stage = 0;
+	private $assistent;
 	//private $current_name = null;
 	//private $current_email = null;
 	//private $connected = null;
@@ -24,24 +31,76 @@ class cModel
 		$this->database = new cDatabase();
 		$this->translate = new cTranslate();
 		$this->whitelist = new cWhiteList();
+		$this->inSession = false;
 		$this->current_id = -1;
 		$this->nwish = 2;
 		$this->admin = 0;
 		$this->stage = 0;
+		$this->assistent = 0;
 		// TODO: $this->skills;
 	}
 
-	public function setConfig($nwish, $skills, $admin, $stage)
+	public function setConfig($nwish, $skills, $admin, $stage, $assistent)
 	{
 		$this->nwish = $nwish;
 		$this->skills =  $skills;
 		$this->admin = $admin;
 		$this->stage = $stage;
+		$this->assistent = $assistent;
+	}
+
+	function joinSession($session)
+	{
+		if(!$this->inSession)
+		{
+			if(!$session)
+			{
+				$this->session = new cSession();
+				$this->session->start();
+				$this->inSession = true;
+			}
+			else
+			{
+				$this->session = $session;
+				$this->inSession = true;
+			}
+		}
 	}
 
 	public function getNWish()
 	{
 		return $this->nwish;
+	}
+
+	public function getRole()
+	{
+		return $this->session->getRole();
+	}
+
+	public function getTeacherId()
+	{
+		if($this->inSession)
+		{
+			if($this->session->getRole() >= 1)
+			{
+				return $this->session->getCurrentId();
+			}
+			return false;
+		}
+		return false;
+	}
+
+	public function getStudentId()
+	{
+		if($this->inSession)
+		{
+			if($this->session->getRole() == 0)
+			{
+				return $this->session->getCurrentId();
+			}
+			return false;
+		}
+		return false;
 	}
 
 	public function getTeacherProperties($email, $pw)
@@ -75,12 +134,40 @@ class cModel
 
 			if (!$table) return false;
 
-			return $this->updateVotingTable($table);
+			if(isset($post['voting_finished']) && ($this->stage == 5 or $this->stage == 6))
+			{
+				$err = $this->updateVotingTable($table);
+
+				if(!$err)
+				{
+					//create csv
+					$this->saveVotingTable();
+					// TODO send mail
+					$mail = new cSendMail();
+					$mail->sendToAssistent($this->assistent);
+
+					// Next stage
+					if($this->stage == 5)
+					{
+						$this->changeConfig("next_stage",1);
+					}
+				}
+			}
+			else
+			{
+				return $this->updateVotingTable($table);
+			}
+
 		}
 
 		if(isset($post['next_stage']))
 		{
 			return $this->changeConfig("next_stage",0);
+		}
+
+		if(isset($post['to_voting_stage']))
+		{
+			return $this->changeConfig("next_stage",1);
 		}
 
 		if(isset($post['cancel_system']))
@@ -93,7 +180,7 @@ class cModel
 			$name = isset($post['new_teacher_name']) ? $post['new_teacher_name'] : false;
 			$mail = isset($post['new_teacher_mail']) ? $post['new_teacher_mail'] : false;
 			$pw = isset($post['new_teacher_pw']) ? $post['new_teacher_pw'] : false;
-			echo "created!!!!!!";
+
 			// TODO return specific error codes here
 			if(!$name or !$mail or !$pw)
 			{
@@ -113,6 +200,11 @@ class cModel
 			if(!$id or !$name or !$mail)
 			{
 				$this->errorhandle->errFormEditTeacher($id,$name,$mail,false);
+
+				if($id == $this->session->getCurrentId())
+				{
+					$this->errorhandle->resetPage("data",fale,false);
+				}
 				return true;
 			}
 
@@ -128,6 +220,10 @@ class cModel
 			if(!$id or !$pw1 or !$pw2)
 			{
 				$this->errorhandle->errFormEditTeacherPw($id,false);
+				if($id == $this->session->getCurrentId())
+				{
+					$this->errorhandle->resetPage("data",false,false);
+				}
 				return true;
 			}
 
@@ -154,20 +250,10 @@ class cModel
 			$description = isset($post['project_description']) ? $post['project_description'] : false;
 			$degree = isset($post['wanted_grade']) ? $post['wanted_grade'] : false;
 			$skills = isset($post['wanted_skills']) ? $post['wanted_skills'] : false;
-			$teacher_id = isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
+			$teacher_id = $this->inSession ? $this->session->getCurrentId() : false; //isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
 
 			// TODO emergency logout here!!
 			if(!$teacher_id or !$titel or !$keywords or !$abstract or !$description or !$degree or !$skills)
-			{
-				$this->errorhandle->errFormNewProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
-				return true;
-			}
-
-			// TODO maybe do this in function
-			$degree = $this->translate->degree2num($degree);
-			$skills = $this->translate->skills2str($skills);
-
-			if(!$degree or !$skills)
 			{
 				$this->errorhandle->errFormNewProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
 				return true;
@@ -199,20 +285,9 @@ class cModel
 			$degree = isset($post['wanted_grade']) ? $post['wanted_grade'] : false;
 			$skills = isset($post['wanted_skills']) ? $post['wanted_skills'] : false;
 
-			// TODO special skills and degree handle here
 			if(!$id or !$titel or !$keywords or !$abstract or !$description or !$degree or !$skills)
 			{
 				$this->errorhandle->errFormEditProject($id,$titel,$keywords,$abstract,$description,$degree,$skills);
-				return true;
-			}
-
-			// TODO maybe do this in function
-			$degree = $this->translate->degree2num($degree);
-			$skills = $this->translate->skills2str($skills);
-
-			if(!$degree or !$skills)
-			{
-				$this->errorhandle->errFormEditProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
 				return true;
 			}
 
@@ -277,8 +352,6 @@ class cModel
 
 			if(!$student_id or !$name or !$matr or !$email or !$field or !$grade)
 			{
-				// INFO skills must not be set
-				if(!$skills) $skills = true;
 				$this->errorhandle->errFormEditStudent($student_id,$name,$matr,$email,$field,$grade,$skills,false);
 				return true;
 			}
@@ -332,12 +405,28 @@ class cModel
 
 		}
 
+		if(isset($post['delete_all_deactive']))
+		{
+			return $this->database->deleteAllDeactive();
+		}
+
 		if(isset($post['change_assistent_email']) && $this->stage == 1)
 		{
 			$email = isset($post['assistent_email']) ? $post['assistent_email'] : false;
 
-			// TODO return specific error codes here
-			if(!$email) return false;
+			if(!$email)
+			{
+				$this->errorhandle->errBadSetting("email");
+				return true;
+			}
+
+			$email = $this->whitelist->validateEmail($email);
+
+			if(!$email)
+			{
+				$this->errorhandle->errBadSetting("email");
+				return true;
+			}
 
 			return $this->changeConfig("assistent",$email);
 		}
@@ -346,8 +435,19 @@ class cModel
 		{
 			$deadline = isset($post['deadline']) ? $post['deadline'] : false;
 
-			// TODO return specific error codes here
-			if(!$deadline) return false;
+			if(!$deadline)
+			{
+				$this->errorhandle->errBadSetting("deadline");
+				return true;
+			}
+
+			$deadline = $this->whitelist->validateDeadline($deadline);
+
+			if(!$deadline)
+			{
+				$this->errorhandle->errBadSetting("deadline");
+				return true;
+			}
 
 			return $this->changeConfig("deadline",$deadline);
 		}
@@ -356,8 +456,19 @@ class cModel
 		{
 			$skill_array = isset($post['skills_to_delete']) ? $post['skills_to_delete'] : false;
 
-			// TODO return specific error codes here
-			if(!$skill_array) return false;
+			if(!$skill_array)
+			{
+				$this->errorhandle->errBadSetting("skills");
+				return true;
+			}
+
+			$skill_array = $this->whitelist->validateSkills($skill_array);
+
+			if(!$skill_array)
+			{
+				$this->errorhandle->errBadSetting("skills");
+				return true;
+			}
 
 			return $this->changeConfig("delete_skills",$skill_array);
 		}
@@ -366,8 +477,19 @@ class cModel
 		{
 			$new_skill = isset($post['new_skill']) ? $post['new_skill'] : false;
 
-			// TODO return specific error codes here
-			if(!$new_skill) return false;
+			if(!$new_skill)
+			{
+				$this->errorhandle->errBadSetting("skills");
+				return true;
+			}
+
+			$new_skill = $this->whitelist->validateText($new_skill, 100);
+
+			if(!$new_skill)
+			{
+				$this->errorhandle->errBadSetting("skills");
+				return true;
+			}
 
 			return $this->changeConfig("add_skills",$new_skill);
 		}
@@ -376,8 +498,19 @@ class cModel
 		{
 			$nwishes = isset($post['num_of_wishes']) ? $post['num_of_wishes'] : false;
 
-			// TODO return specific error codes here
-			if(!$nwishes) return false;
+			if(!$nwishes)
+			{
+				$this->errorhandle->errBadSetting("nwishes");
+				return true;
+			}
+
+			$nwishes = $this->whitelist->validateNWishes($nwishes);
+
+			if(!$nwishes)
+			{
+				$this->errorhandle->errBadSetting("nwishes");
+				return true;
+			}
 
 			return $this->changeConfig("change_num_wishes",$nwishes);
 		}
@@ -395,20 +528,10 @@ class cModel
 			$description = isset($post['project_description']) ? $post['project_description'] : false;
 			$degree = isset($post['wanted_grade']) ? $post['wanted_grade'] : false;
 			$skills = isset($post['wanted_skills']) ? $post['wanted_skills'] : false;
-			$teacher_id = isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
+			$teacher_id = $this->inSession ? $this->session->getCurrentId() : false; //isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
 
 			// TODO emergency logout here!!
 			if(!$teacher_id or !$titel or !$keywords or !$abstract or !$description or !$degree or !$skills)
-			{
-				$this->errorhandle->errFormNewProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
-				return true;
-			}
-
-			// TODO maybe do this in function
-			$degree = $this->translate->degree2num($degree);
-			$skills = $this->translate->skills2str($skills);
-
-			if(!$degree or !$skills)
 			{
 				$this->errorhandle->errFormNewProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
 				return true;
@@ -448,17 +571,6 @@ class cModel
 				return true;
 			}
 
-			// TODO maybe do this in function
-			$degree = $this->translate->degree2num($degree);
-			$skills = $this->translate->skills2str($skills);
-
-			if(!$degree or !$skills)
-			{
-				$this->errorhandle->errFormEditProject($teacher_id,$titel,$keywords,$abstract,$description,$degree,$skills);
-				return true;
-			}
-
-			// TODO authentification here!!
 			return $this->editProject($id, $titel, $keywords, $abstract, $description, $degree, $skills);
 		}
 
@@ -479,7 +591,7 @@ class cModel
 		if(isset($post['project_remove_me']) && $this->stage == 1)
 		{
 			$id = isset($post['project_id']) ? $post['project_id'] : false;
-			$remove = isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
+			$remove = $this->inSession ? $this->session->getCurrentId() : false; //isset($_SESSION['current_id']) ? $_SESSION['current_id'] : false;
 
 			// TODO emergency logout here!!
 			if(!$id or !$remove)
@@ -529,7 +641,7 @@ class cModel
 	{
 		if((isset($post['student_save_interests']) or isset($post['student_vote'])) && ($this->stage == 2 or $this->stage == 3 or $this->stage == 4))
 		{
-			$student_id = isset($_SESSION['student_id']) ? $_SESSION['student_id'] : false;
+			$student_id = $this->inSession ? $this->session->getCurrentId() : false; //isset($_SESSION['student_id']) ? $_SESSION['student_id'] : false;
 			$interest1 = isset($post['first_wish']) ? $post['first_wish'] : false;
 			$interest2 = isset($post['second_wish']) ? $post['second_wish'] : false;
 			$interest3 = isset($post['third_wish']) ? $post['third_wish'] : false;
@@ -549,7 +661,7 @@ class cModel
 
 		if(isset($post['student_delete_me']))
 		{
-			$student_id = isset($_SESSION['student_id']) ? $_SESSION['student_id'] : false;
+			$student_id = $this->inSession ? $this->session->getCurrentId() : false; //isset($_SESSION['student_id']) ? $_SESSION['student_id'] : false;
 
 			// TODO Emergency logout here
 			if(!$student_id)
@@ -560,7 +672,7 @@ class cModel
 			$this->deleteStudent($student_id);
 
 			// TODO use secure function here!
-			session_destroy();
+			$this->session->destroy(); //session_destroy();
 			header('Location: index.php?signout=1');
 
 			return false;
@@ -625,6 +737,10 @@ class cModel
 		if(!$teacher_id or !$name or !$email)
 		{
 			$this->errorhandle->errFormEditTeacher($teacher_id,$name,$email,false);
+			if($teacher_id == $this->session->getCurrentId())
+			{
+				$this->errorhandle->resetPage("data",false,false);
+			}
 			return true;
 		}
 
@@ -633,6 +749,10 @@ class cModel
 		if($err)
 		{
 			$this->errorhandle->errFormEditTeacher($teacher_id,$name,$email,true);
+			if($teacher_id == $this->session->getCurrentId())
+			{
+				$this->errorhandle->resetPage("data",false,false);
+			}
 			return true;
 		}
 		return false;
@@ -640,12 +760,15 @@ class cModel
 
 	public function updateTeacherPw($teacher_id, $pw1, $pw2)
 	{
-
 		$teacher_id = $this->whitelist->validateId($teacher_id);
 
 		if (strcmp($pw1,$pw2) !== 0)
 		{
 			$this->errorhandle->errFormEditTeacherPw($teacher_id,true);
+			if($teacher_id == $this->session->getCurrentId())
+			{
+				$this->errorhandle->resetPage("data",false,false);
+			}
 			return true;
 		}
 
@@ -654,6 +777,10 @@ class cModel
 		if(!$hash)
 		{
 			$this->errorhandle->errFormEditTeacherPw($teacher_id,false);
+			if($teacher_id == $this->session->getCurrentId())
+			{
+				$this->errorhandle->resetPage("data",false,false);
+			}
 			return true;
 		}
 
@@ -662,6 +789,10 @@ class cModel
 		if($err)
 		{
 			$this->errorhandle->errFormEditTeacherPw($teacher_id,false);
+			if($teacher_id == $this->session->getCurrentId())
+			{
+				$this->errorhandle->resetPage("data",false,false);
+			}
 			return true;
 		}
 		return false;
@@ -734,7 +865,51 @@ class cModel
 		$this->database->updateVotingTable($array);
 		if(!$table) return true;
 
+		return false;
 
+
+	}
+
+	public function saveVotingTable()
+	{
+		$myfile = fopen("tmp/Assignment.xls", "w") or die("Unable to open file!");
+		fwrite($myfile, "Projektname\tBetreuer\tStudenten\tMatrikelnummer\n");
+
+		$this->startQuery('projects',0);
+		while($row = $this->getRow())
+		{
+			fwrite($myfile, $row["titel"]);
+			$students = $this->getStudentsByProject($row["project_id"],1);
+			$teacher = $this->getTeacherByProject($row["order_id"]);
+
+			$nStudents = sizeof($students[0]);
+			$nTeacher = sizeof($teacher[0]);
+
+			$max = max($nStudents,$nTeacher);
+			for ($i=0; $i < $max; $i++)
+			{
+				fwrite($myfile, "\t");
+				if($i < $nTeacher)
+				{
+					fwrite($myfile, $teacher[0][$i]."\t");
+				}
+				else
+				{
+					fwrite($myfile, "\t");
+				}
+				if($i < $nStudents)
+				{
+					fwrite($myfile, $students[1][$i]."\t");
+				}
+				else
+				{
+					fwrite($myfile, "\t");
+				}
+				fwrite($myfile, "\n");
+			}
+		}
+		fclose($myfile);
+		return false;
 	}
 
 	public function getDegreeById($id)
@@ -755,6 +930,9 @@ class cModel
 
 	public function createNewStudent($name, $email, $field, $matr, $grade, $skills)
 	{
+
+		$grade = $this->translate->degree2num($grade);
+
 		$name = $this->whitelist->validateName($name);
 		$email = $this->whitelist->validateEmail($email);
 		$field = $this->whitelist->validateStudyfield($field);
@@ -762,17 +940,9 @@ class cModel
 		$grade = $this->whitelist->validateGrade($grade);
 		$skills = $this->whitelist->validateSkills($skills);
 
-		if(!$name or !$matr or !$email or !$field or !$grade or !$skills)
-		{
-			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills,false);
-			return true;
-		}
-
-		$grade = $this->translate->degree2num($grade);
 		$skills = $this->translate->skills2str($skills);
 
-		//echo $skills;
-		if(!$grade or !$skills)
+		if(!$name or !$matr or !$email or !$field or !$grade or !$skills)
 		{
 			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills,false);
 			return true;
@@ -787,11 +957,17 @@ class cModel
 			$this->errorhandle->errFormNewStudent($name,$matr,$email,$field,$grade,$skills,true);
 			return true;
 		}
+
+		$mail = new cSendMail;
+		$mail->sendToStudent($email,$crypt);
+
 		return false;
 	}
 
 	public function updateStudent($student_id, $name, $email, $field, $matr, $grade, $skills)
 	{
+		$grade = $this->translate->degree2num(array($grade));
+
 		$student_id = $this->whitelist->validateId($student_id);
 		$name = $this->whitelist->validateName($name);
 		$email = $this->whitelist->validateEmail($email);
@@ -800,24 +976,10 @@ class cModel
 		$grade = $this->whitelist->validateGrade($grade);
 		$skills = $this->whitelist->validateSkills($skills);
 
+		$skills = $this->translate->skills2str($skills);
 
 		if(!$student_id or !$name or !$matr or !$email or !$field or !$grade)
 		{
-			// INFO skills must not be set
-			if(!$skills) $skills = true;
-			$this->errorhandle->errFormEditStudent($student_id,$name,$matr,$email,$field,$grade,$skills,false);
-			return true;
-		}
-
-		$grade = $this->translate->degree2num(array($grade));
-
-		if ($skills !== false)
-			$skills = $this->translate->skills2str($skills);
-
-		if(!$grade)
-		{
-			// INFO skills must not be set
-			if(!$skills) $skills = true;
 			$this->errorhandle->errFormEditStudent($student_id,$name,$matr,$email,$field,$grade,$skills,false);
 			return true;
 		}
@@ -917,6 +1079,8 @@ class cModel
 
 	public function createNewProject($titel, $keywords, $abstract, $description, $grade, $skills, $teacher_id)
 	{
+		$grade = $this->translate->degree2num($grade);
+
 		$titel = $this->whitelist->validateText($titel,400);
 		$keywords = $this->whitelist->validateText($keywords,400);
 		$abstract = $this->whitelist->validateText($abstract,600);
@@ -925,6 +1089,7 @@ class cModel
 		$skills = $this->whitelist->validateSkills($skills);
 		$teacher_id = $this->whitelist->validateId($teacher_id);
 
+		$skills = $this->translate->skills2str($skills);
 
 		if(!$teacher_id or !$titel or !$keywords or !$abstract or !$description or !$grade or !$skills)
 		{
@@ -944,6 +1109,8 @@ class cModel
 
 	public function editProject($project_id, $titel, $keywords, $abstract, $description, $grade, $skills)
 	{
+		$grade = $this->translate->degree2num($grade);
+
 		$project_id = $this->whitelist->validateId($project_id);
 		$titel = $this->whitelist->validateText($titel,400);
 		$keywords = $this->whitelist->validateText($keywords,400);
@@ -951,6 +1118,8 @@ class cModel
 		$description = $this->whitelist->validateText($description,1500);
 		$grade = $this->whitelist->validateGrade($grade);
 		$skills = $this->whitelist->validateSkills($skills);
+
+		$skills = $this->translate->skills2str($skills);
 
 		if(!$project_id or !$titel or !$keywords or !$abstract or !$description or !$grade or !$skills)
 		{
@@ -1071,8 +1240,9 @@ class cModel
 
 		// TODO return specific error codes here
 		if(!$rand_id) return false;
-
-		return $this->database->getStudent($rand_id);
+		$toggle = 1;
+		if($this->stage == 1) $toggle = 0;
+		return $this->database->getStudent($rand_id, $toggle);
 	}
 
 	public function getSkills()
@@ -1098,31 +1268,40 @@ class cModel
 		// TODO validate inputs!!!!
 		$xml = new DOMDocument();
 		$xml->load("system/config/config.xml");
-		if(!$xml) return false; // TODO return fatal error here
+		if(!$xml)
+		{
+			return false; // TODO return fatal error here
+
+		}
 
 		switch($config)
 		{
 			case "next_stage":
 				$cur_stage = $xml->documentElement->getElementsByTagName("stage")->item(0)->textContent;
 				$next = $this->whitelist->validateStageTransition($cur_stage);
-				$xml->documentElement->getElementsByTagName("stage")->item(0)->textContent = $next;
+				$xml->documentElement->getElementsByTagName("stage")->item(0)->nodeValue = $next;
+				if($arg == 1) $to_voting = 1;
+				if($next == 1)
+				{
+					$this->database->deactivateAllStudents();
+				}
 				break;
 
 			case "cancel_system":
-				$xml->documentElement->getElementsByTagName("stage")->item(0)->textContent = 1;
+				$xml->documentElement->getElementsByTagName("stage")->item(0)->nodeValue = 1;
 				break;
 
 			case "assistent":
-				$xml->documentElement->getElementsByTagName("assistent")->item(0)->textContent = $arg;
+				$xml->documentElement->getElementsByTagName("assistent")->item(0)->nodeValue = $arg;
 				break;
 
 			case "deadline":
-				$xml->documentElement->getElementsByTagName("deadline")->item(0)->textContent = $arg;
+				$xml->documentElement->getElementsByTagName("deadline")->item(0)->nodeValue = $arg;
 				break;
 
 			case "change_num_wishes":
 				if($this->whitelist->validateNWishes($arg))
-					$xml->documentElement->getElementsByTagName("nwish")->item(0)->textContent = $arg;
+					$xml->documentElement->getElementsByTagName("nwish")->item(0)->nodeValue = $arg;
 				break;
 
 			case "delete_skills":
@@ -1179,9 +1358,11 @@ class cModel
 		}
 
 		$xml->save("system/config/config.xml");
-
 		// INFO ..done reload system now
-		header("Location: redirect.php?page=settings");
+		if(isset($to_voting))
+			header("Location: redirect.php?page=voting");
+		else
+			header("Location: redirect.php?page=settings");
 	}
 
 }

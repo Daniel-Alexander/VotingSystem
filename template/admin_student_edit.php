@@ -1,5 +1,5 @@
 <div class="one">
-  <?php if($this->error) echo $this->errorhandle->getErrMsg() ?>
+  <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
   <form action="redirect.php?page=student" method="post">
     <div class="two-thirds">
       <h2>Student bearbeiten</h2>

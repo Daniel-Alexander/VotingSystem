@@ -29,7 +29,7 @@
 		}
 		elseif(strcmp($this->subpage,'show') === 0)
 		{
-			$row = $this->model->getProjectByAuth($this->page_id,$_SESSION['current_id']);
+			$row = $this->model->getProjectByAuth($this->page_id,$this->model->getTeacherId());//$_SESSION['current_id']);
 			$nwishes = $this->model->getNWish();
 			if(!$row)
 			{
@@ -42,7 +42,7 @@
 		}
 		elseif(strcmp($this->subpage,'edit') === 0)
 		{
-			$row = $this->model->getProjectByAuth($this->page_id,$_SESSION['current_id']);
+			$row = $this->model->getProjectByAuth($this->page_id,$this->model->getTeacherId());//$_SESSION['current_id']);
 			if(!$row)
 			{
 				echo "Error: call to non existing project id";
@@ -79,7 +79,7 @@
 	// TODO teacher comes from errorhandler fix this in there!!
 	elseif(strcmp($this->page,'data') === 0 or strcmp($this->page,'teacher') === 0 )
 	{
-		$own_id = $_SESSION['current_id'];
+		$own_id = $this->model->getTeacherId();//$_SESSION['current_id'];
 		$row = $this->model->getTeacherById($own_id);
 
 		if(!$row)

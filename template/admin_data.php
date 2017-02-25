@@ -1,5 +1,6 @@
 <div class="one">
-  <form action="redirect.php?page=teacher" method="post">
+  <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
+  <form action="redirect.php?page=data" method="post">
     <input type="hidden" value="<?php echo $own_id ?>" name="teacher_id">
     <div class="one-half">
       <h2>Eigene Daten ändern</h2>
@@ -17,7 +18,7 @@
     </div>
   </form>
   <div class="two-thirds"><hr></div>
-  <form action="redirect.php?page=teacher" method="post">
+  <form action="redirect.php?page=data" method="post">
     <input type="hidden" value="<?php echo $own_id ?>" name="teacher_id">
     <div class="one-half">
       <label for="id1">Neues Passwort</label>

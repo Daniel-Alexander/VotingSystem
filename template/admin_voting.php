@@ -1,6 +1,6 @@
 <div class="one" id="redips-drag">
-<?php if($this->stage < 4) echo "<div class='infoBox'>Das Voting kann nur in Phase Voting abgeschlossen werden. In der derzeitigen Phase kann nur gespeichert werden</div>";?>
-<?php if($this->stage > 4) echo "<div class='infoBox'>In der derzeitigen Phase kann nur gespeichert werden</div>";?>
+<?php if($this->stage < 4 or $this->stage > 6) echo "<div class='infoBox'>In der derzeitigen Phase kann nur gespeichert werden</div>";?>
+<?php if($this->stage == 4) echo "<div class='infoBox'>Voting läuft...</div>";?>
 
 <div class="two-thirds"><!-- style="vertical-align:top;">-->
 
@@ -99,9 +99,32 @@ $students_on_stack = $this->model->getStudentsWithoutRequest($nwish);
 	<!--input type="submit" value="Abschließen" name="create_new_project"-->
 </div>
 
+<?php
+if($this->stage == 4)
+{ ?>
 <div class='one-third'>
-	<a href='redirect.php?page=voting' onclick='send_voting_table(true)'><button class="linkBtn" <?php if($this->stage != 4) echo "disabled"; ?>>Abschließen</button></a>
-	<!--input type="submit" value="Abschließen" name="create_new_project"-->
+	<form action="redirect.php?page=voting" method="post">
+    <input type="submit" value="Voting beenden" name="to_voting_stage">
+  </form>
 </div>
-
+<?php }
+if($this->stage == 5)
+{
+	?>
+	<div class='one-third'>
+		<a href='redirect.php?page=voting' onclick='send_voting_table(true)'><button class="linkBtn" >Assignment abschließen</button></a>
+		<!--input type="submit" value="Abschließen" name="create_new_project"-->
+	</div>
+	<?php
+}
+if($this->stage == 6)
+{
+	?>
+	<div class='one-third'>
+		<a href='redirect.php?page=voting' onclick='send_voting_table(true)'><button class="linkBtn" >Erneut abschließen</button></a>
+		<!--input type="submit" value="Abschließen" name="create_new_project"-->
+	</div>
+	<?php
+}
+?>
 </div>

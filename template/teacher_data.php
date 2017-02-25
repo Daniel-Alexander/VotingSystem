@@ -1,5 +1,5 @@
 <div class="one">
-  <?php if($this->error) echo $this->errorhandle->getErrMsg() ?>
+  <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
   <form action="redirect.php?page=data" method="post">
     <input type="hidden" value="<?php echo $own_id ?>" name="teacher_id">
     <div class="one-half">

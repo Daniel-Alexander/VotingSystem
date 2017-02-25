@@ -14,10 +14,10 @@ class cView
 	private $stage = null;
 	private $model = null;
 	private $deleted_page = null;
+	private $url = null;
 
 	function __construct($model,$errorhandle)
 	{
-		// TODO better start with error page here
 		$this->model = $model;
 		$this->errorhandle = $errorhandle;
 		$this->template = 'aut_student';
@@ -28,6 +28,7 @@ class cView
 		$this->page_id = 0;
 		$this->stage = 0;
 		$this->deleted_page = false;
+		$this->url = "http://alpha-voting.bplaced.net/";
 	}
 
 	public function setStage($stage)

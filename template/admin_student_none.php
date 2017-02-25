@@ -38,4 +38,11 @@
 			?>
 		</tbody>
 	</table>
+
+<div class="one-third">
+	<form action="redirect.php?page=student" method="post">
+    <input type="submit" value="Alle inaktiven löschen" name="delete_all_deactive">
+  </form>
+</div>
+
 </div>

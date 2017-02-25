@@ -7,21 +7,35 @@ class cDatabase
 	private $active_query = null;
 	private $db = null;
 	private $stmt = null;
+	private $db_host = null;
+	private $db_username =  null;
+	private $db_passwort = null;
+	private $db_name = null;
 
 	function __construct()
 	{
 		$this->connected = 0;
 		$this->active_query = 0;
+
+		//$this->db_host = "localhost";
+		//$this->db_username =  "alpha-voting";
+		//$this->db_passwort = "XXX";
+		//$this->db_name = "alpha-voting";
+
+		$this->db_host = "";
+		$this->db_username =  "root";
+		$this->db_passwort = "";
+		$this->db_name = "votingsystem22";
+
 	}
 
 	public function connect()
 	{
-		// TODO replace by secure functions
-		// TODO check if connection was succesful
 		if(!$this->connected)
 		{
-			mysql_connect("","root");
-			mysql_select_db("votingsystem");
+			mysql_connect($this->db_host, $this->db_username, $this->db_passwort) or die ("Es konnte keine Verbindung hergestellt werden!");
+			mysql_select_db($this->db_name);
+
 			$this->connected = 1;
 		}
 		// Prepared statements usage:
@@ -50,7 +64,7 @@ class cDatabase
 			$row = mysql_fetch_assoc($result);
 
 			// TODO use hashes here
-			if($row["pw"] == $hash)
+			if(password_verify($hash, $row["pw"])) //($row["pw"] == $hash)
 			{
 				foreach($admins as $admin)
 				{
@@ -64,7 +78,7 @@ class cDatabase
 		return false;
 	}
 
-	public function getStudent($id)
+	public function getStudent($id, $toggle)
 	{
 		if(!$this->connected)
 			$this->connect();
@@ -77,7 +91,7 @@ class cDatabase
 		{
 			$row = mysql_fetch_assoc($result);
 			// TODO maybe dont do this everytime!
-			$this->studentToggleActive($row['student_id'],1);
+			if($toggle) $this->studentToggleActive($row['student_id'],1);
 			return $row['student_id'];
 		}
 		return false;
@@ -280,6 +294,30 @@ class cDatabase
 			return true;
 		}
 		mysql_query($sql) or die(mysql_error());
+		return false;
+	}
+
+	public function deactivateAllStudents()
+	{
+		// TODO return error code here
+		if(!$this->connected)
+			$this->connect();
+
+		$sql = "UPDATE student SET active=0";
+		mysql_query($sql) or die(mysql_error());
+
+		return false;
+	}
+
+	public function deleteAllDeactive()
+	{
+		// TODO return error code here
+		if(!$this->connected)
+			$this->connect();
+
+		$sql = "DELETE FROM student WHERE active=0";
+		mysql_query($sql) or die(mysql_error());
+
 		return false;
 	}
 

@@ -13,7 +13,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php $this->model->startQuery('projects',$_SESSION['current_id']);
+			<?php $this->model->startQuery('projects',$this->model->getTeacherId());//$_SESSION['current_id']);
 			while($row = $this->model->getRow())
 			{
 				echo "<tbody>

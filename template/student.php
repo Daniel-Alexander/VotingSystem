@@ -29,14 +29,14 @@
 				elseif($this->stage == 2 or $this->stage == 3 or $this->stage == 4)
 				{
 					$nwish = $this->model->getNWish();
-					$cur_interests = $this->model->getStudentInterests($_SESSION['student_id']);
+					$cur_interests = $this->model->getStudentInterests($this->model->getStudentId());//$_SESSION['student_id']);
 
 					include 'student_project_none.php';
 				}
 				elseif($this->stage == 5 or $this->stage == 6)
 				{
 					$nwish = $this->model->getNWish();
-					$cur_interests = $this->model->getStudentInterests($_SESSION['student_id']);
+					$cur_interests = $this->model->getStudentInterests($this->model->getStudentId());//$_SESSION['student_id']);
 
 					include 'student_assigned.php';
 				}
@@ -65,7 +65,7 @@
 		if($this->stage == 4)
 		{
 			$nwish = $this->model->getNWish();
-			$cur_interests = $this->model->getStudentInterests($_SESSION['student_id']);
+			$cur_interests = $this->model->getStudentInterests($this->model->getStudentId());//$_SESSION['student_id']);
 			include 'student_voting.php';
 		}
 		else
@@ -75,7 +75,7 @@
 	}
 	elseif(strcmp($this->page,'data') === 0)
 	{
-		$row = $this->model->getStudentById($_SESSION['student_id']);
+		$row = $this->model->getStudentById($this->model->getStudentId());//$_SESSION['student_id']);
 		if(!$row)
 		{
 			echo "Error: call to non existing page_id";

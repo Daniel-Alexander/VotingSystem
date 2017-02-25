@@ -1,5 +1,5 @@
 <div class="one">
-  <?php if($this->error) echo $this->errorhandle->getErrMsg() ?>
+  <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
   <?php if($this->stage != 1){ echo "<div class='infoBox'>Aktion in der aktuellen Phase nicht möglich</div>";
   } else { ?>
   <form action="redirect.php?page=project" method="post">

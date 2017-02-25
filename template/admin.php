@@ -162,7 +162,7 @@
    }
 	 elseif(strcmp($this->page,'data') === 0)
 	 {
-				$own_id = $_SESSION['current_id'];
+				$own_id = $this->model->getTeacherId(); //$_SESSION['current_id'];
 				$row = $this->model->getTeacherById($own_id);
 
 				if(!$row)

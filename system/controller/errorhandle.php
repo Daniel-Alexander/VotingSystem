@@ -1,5 +1,4 @@
 <?php
-
 class cErrorHandle
 {
 
@@ -39,6 +38,13 @@ class cErrorHandle
   public function getPage()
   {
     return $this->err_page;
+  }
+
+  public function resetPage($page, $subpage, $page_id)
+  {
+    $this->err_page = $page;
+    $this->err_subpage = $subpage;
+    $this->err_page_id = $page_id;
   }
 
   public function getSubpage()
@@ -192,7 +198,7 @@ class cErrorHandle
 
 
     if($not_equal)
-      $msg = "".$msg."Die PasswÃ¶rter stimmen nich Ã¼berein <br>";
+      $msg = "".$msg."Die Passwörter stimmen nich überein <br>";
     else
       $msg = "".$msg."Das Passwort entspricht nicht dem erwarteten Format <br>";
 
@@ -220,7 +226,7 @@ class cErrorHandle
     if($keywords !== false)
       $this->store_keywords = $keywords;
     else
-      $msg = "".$msg."Der SchlagwÃ¶rter entsprichen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Der Schlagwörter entsprichen nicht dem erwarteten Format <br>";
 
     if($abstract !== false)
       $this->store_abstract = $abstract;
@@ -237,7 +243,7 @@ class cErrorHandle
       $msg = "".$msg."Der angestrebte Abschluss entspricht nicht dem erwarteten Format <br>";
 
     if($skills === false)
-      $msg = "".$msg."Die FÃ¤higkeiten entsprechen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Die Fähigkeiten entsprechen nicht dem erwarteten Format <br>";
 
       $this->err_msg = $msg;
   }
@@ -266,7 +272,7 @@ class cErrorHandle
     if($keywords !== false)
       $this->store_keywords = $keywords;
     else
-      $msg = "".$msg."Der SchlagwÃ¶rter entsprichen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Der Schlagwörter entsprichen nicht dem erwarteten Format <br>";
 
     if($abstract !== false)
       $this->store_abstract = $abstract;
@@ -283,7 +289,7 @@ class cErrorHandle
       $msg = "".$msg."Der angestrebte Abschluss entspricht nicht dem erwarteten Format <br>";
 
     if($skills === false)
-      $msg = "".$msg."Die FÃ¤higkeiten entsprechen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Die Fähigkeiten entsprechen nicht dem erwarteten Format <br>";
 
       $this->err_msg = $msg;
   }
@@ -320,7 +326,7 @@ class cErrorHandle
       $msg = "".$msg."Der angestrebte Abschluss entspricht nicht dem erwarteten Format <br>";
 
     if($skills === false)
-      $msg = "".$msg."Die FÃ¤higkeiten entsprechen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Die Fähigkeiten entsprechen nicht dem erwarteten Format <br>";
 
     if($email_exists)
       $msg = "".$msg."Die E-Mail Adresse existiert bereits <br>";
@@ -367,10 +373,38 @@ class cErrorHandle
       $msg = "".$msg."Der angestrebte Abschluss entspricht nicht dem erwarteten Format <br>";
 
     if($skills === false)
-      $msg = "".$msg."Die FÃ¤higkeiten entsprechen nicht dem erwarteten Format <br>";
+      $msg = "".$msg."Die Fähigkeiten entsprechen nicht dem erwarteten Format <br>";
 
     if($email_exists)
       $msg = "".$msg."Die E-Mail Adresse existiert bereits <br>";
+
+    $this->err_msg = $msg;
+  }
+
+  public function errBadSetting($setting)
+  {
+    $this->err_page = "settings";
+    $msg = "Error: ";
+
+    switch($setting)
+    {
+      case "email":
+        $msg = "".$msg."Die E-Mail Adresse entspricht nicht dem erwarteten Format <br>";
+        break;
+
+      case "deadline":
+        $msg = "".$msg."Die Deadline entspricht nicht dem erwarteten Format: dd.mm.yyyy <br>";
+        break;
+
+      case "skills":
+        $msg = "".$msg."Die Fähigkeit entspricht nicht dem erwarteten Format<br>";
+        break;
+
+      case "nwishes":
+        $msg = "".$msg."Die Anzahl der Wünsche entspricht nicht dem erwarteten Format<br>";
+        break;
+    }
+
 
     $this->err_msg = $msg;
   }

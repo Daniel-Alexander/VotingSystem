@@ -1,4 +1,5 @@
 <html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
     <head>
         <title>Voting System</title>
         <link rel="stylesheet" href="style/style.css" />
@@ -17,7 +18,7 @@
 						<label for="id1">E-Mail</label>
 						<input type="text" required name="teacher_mail" id="id1">
 						<label for="id1">Passwort</label>
-						<input type="text" required name="teacher_pw" id="id1">
+						<input type="password" required name="teacher_pw" id="id1">
 						<input type="submit" value="Login" name="teacher_login">
 					</form>
 					<br>

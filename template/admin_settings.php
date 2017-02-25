@@ -1,4 +1,5 @@
 <div class="one">
+  <?php if($this->error) echo "<div class='errcontainer'>".$this->errorhandle->getErrMsg()."</div>" ?>
   <h2>Settings</h2>
   <div class="one-third">
   <h1>Aktuelle Phase:  <?php echo $this->getStageName(); ?></h1>
@@ -17,9 +18,19 @@
   <div class="one-third">
     <form action="redirect.php?page=settings" method="post">
       <h1>Deadline für Phase: Sign In</h1>
-      <input type="text" name="deadline" value="<?php echo $result[1]; ?>" placeholder="Deadline">
+      <input type="text" name="deadline" value="<?php echo $result[1]; ?>" placeholder="dd.mm.yyyy">
       <input type="submit" value="Speichern" name="set_new_deadline" <?php if($this->stage != 1) echo "disabled"; ?>>
     </form>
+  </div>
+  <div class="one-third">
+    <div class="infoBox">
+    <h1>Der Server meldet folgende Zeit</h1>
+    <?php
+      $date = getdate();
+      echo "<h1>Datum:   ".$date['mday'].".".$date['mon'].".".$date['year']."</h1>";
+      echo "<h1>Uhrzeit: ".$date['hours'].":".$date['minutes'].":".$date['seconds']."</h1>"
+    ?>
+  </div>
   </div>
   <hr>
   <div class="one-third">

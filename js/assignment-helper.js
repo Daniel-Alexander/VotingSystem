@@ -231,7 +231,11 @@ send_voting_table = function (finished)
 	//str = "table[]=3&table[]=1&table[]=2"
 	if(finished)
 	{
-		window.alert("Abschließen");
+		str = "update_voting_table=1&voting_finished=1&voting_table="+post_array;
+	}
+	else
+	{
+		str = "update_voting_table=1&voting_table="+post_array;
 	}
 	//
 
@@ -249,7 +253,7 @@ send_voting_table = function (finished)
 
 	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.send("update_voting_table=1&voting_table="+post_array);
+	xhr.send(str);
 
 }
 

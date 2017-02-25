@@ -23,7 +23,7 @@
                 <tr>
                   <td>".$row["full_name"]."</td>
                   <td>".$row["email"]."</td>";
-              if ($row["teacher_id"] == $_SESSION["current_id"])
+              if ($row["teacher_id"] == $this->model->getTeacherId())//$_SESSION["current_id"])
               {
                 echo "<td><a href='redirect.php?page=data'><button class='linkBtn'>Anzeigen</button></a></td>";
               }

@@ -1,8 +1,12 @@
 <?php
 
-session_start();
+require_once 'system/controller/session.php';
 
-if(!isset($_SESSION['valid']))
+$session = new cSession;
+
+$session->start();
+
+if(!$session->isValid())
 {
 	header('Location: index.php');
 }
@@ -11,6 +15,8 @@ else
 	require_once 'system/controller/controller.php';
 
 	$controller = new cController($_GET, $_POST);
+
+	$controller->joinSession($session);
 
 	$controller->redirectSession();
 

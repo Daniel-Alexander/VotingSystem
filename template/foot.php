@@ -1,6 +1,6 @@
 
 <footer>
-	copyright
+	Developed by Daniel Thomanek - TU Berlin
 </footer>
 
 </div>	<!-- close wrapper -->		
