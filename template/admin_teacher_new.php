@@ -14,7 +14,7 @@
 <br>
 <div class="two-thirds">
   <label for="id1">Initiales Passwort</label>
-  <input type="text" required name="new_teacher_pw" placeholder="Init Pw">
+  <input type="password" required name="new_teacher_pw" placeholder="Init Pw">
 </div>
 <br>
 <div class="one-third">

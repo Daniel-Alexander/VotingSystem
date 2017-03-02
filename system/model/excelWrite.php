@@ -1,6 +1,65 @@
-<html xmlns:o='urn:schemas-microsoft-com:office:office'
+<?php
+
+class cExcelWrite
+{
+	private $xls = null;
+	private $open = null;
+	
+	function __construct()
+	{
+		$this->open = false;
+	}
+	
+	public function open($file)
+	{
+		$this->xls = fopen($file, "w") or die("Unable to open file!");
+		$this->open = true;
+		
+		$this->writeHeader();
+			
+		$this->writeRow("Titel", "Betreuer", "Studenten", "Matrikelnummer");
+		$this->writeEmptyRow();
+	}
+	
+	public function close()
+	{
+		if($this->open)
+		{
+			fwrite($this->xls,"</table></body></html>");
+			fclose($this->xls);
+		}
+	}
+	
+	public function writeRow($title, $teacher, $student, $matr)
+	{
+		if($this->open)
+        {
+			fwrite($this->xls,"<tr>");
+			fwrite($this->xls,"<td width=192 >$title</td>");
+			fwrite($this->xls,"<td width=128 >$teacher</td>");
+			fwrite($this->xls,"<td width=128 >$student</td>");
+			fwrite($this->xls,"<td width=128 >$matr</td>");
+			fwrite($this->xls,"</tr>");
+		}
+	}
+	
+	public function writeEmptyRow()
+	{
+		if($this->open)
+        {
+			fwrite($this->xls,"<tr></tr>");
+		}
+	}
+	
+	public function writeHeader()
+    {
+		if($this->open)
+		{
+			fwrite($this->xls,"<html xmlns:o='urn:schemas-microsoft-com:office:office'
 				xmlns:x='urn:schemas-microsoft-com:office:excel'
-				xmlns='http://www.w3.org/TR/REC-html40'><head>
+				xmlns='http://www.w3.org/TR/REC-html40'>");
+
+			fwrite($this->xls,"<head>
 				<meta http-equiv=Content-Type content='text/html; charset=us-ascii'>
 				<meta name=ProgId content=Excel.Sheet>
 				<!--[if gte mso 9]><xml>
@@ -12,7 +71,9 @@
 				 <o:OfficeDocumentSettings>
 				  <o:DownloadComponents/>
 				 </o:OfficeDocumentSettings>
-				</xml><![endif]--><style>
+				</xml><![endif]-->");
+			
+			fwrite($this->xls,"<style>
 				<!--table
 					{mso-displayed-decimal-separator:'\.';
 					mso-displayed-thousand-separator:'\,';}
@@ -73,7 +134,8 @@
 					{mso-style-parent:style0;
 					white-space:normal;}
 				-->
-				</style><!--[if gte mso 9]><xml>
+				</style>");
+			fwrite($this->xls,"<!--[if gte mso 9]><xml>
 				 <x:ExcelWorkbook>
 				  <x:ExcelWorksheets>
 				   <x:ExcelWorksheet>
@@ -97,4 +159,7 @@
 				</head>
 
 				<body link=blue vlink=purple>
-				<table x:str border=0 cellpadding=0 cellspacing=0 style='border-collapse: collapse;table-layout:fixed;'><tr><td width=192 >Titel</td><td width=128 >Betreuer</td><td width=128 >Studenten</td><td width=128 >Matrikelnummer</td></tr><tr></tr><tr><td width=192 >Perpetuum Mobile</td><td width=128 >Administrator</td><td width=128 ></td><td width=128 ></td></tr><tr></tr><tr><td width=192 >Roboter</td><td width=128 >Seymour Skinner</td><td width=128 >Daniel</td><td width=128 >123456</td></tr><tr></tr><tr><td width=192 >Autonomes Auto</td><td width=128 >Administrator</td><td width=128 ></td><td width=128 ></td></tr><tr><td width=192 ></td><td width=128 >Seymour Skinner</td><td width=128 ></td><td width=128 ></td></tr><tr></tr><tr><td width=192 >Zeitmaschine</td><td width=128 >Administrator</td><td width=128 >Lisa Simpson</td><td width=128 >12345</td></tr><tr><td width=192 ></td><td width=128 >Edna krabappel</td><td width=128 >Milhouse van Houten</td><td width=128 >12345</td></tr><tr><td width=192 ></td><td width=128 >Seymour Skinner</td><td width=128 >Nelson Muntz</td><td width=128 >12345</td></tr><tr></tr></table></body></html>
+				<table x:str border=0 cellpadding=0 cellspacing=0 style='border-collapse: collapse;table-layout:fixed;'>");
+		}
+    }
+}

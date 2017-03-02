@@ -22,12 +22,12 @@
     <input type="hidden" value="<?php echo $this->page_id ?>" name="teacher_id">
     <div class="two-thirds">
       <label for="id1">Neues Passwort</label>
-      <input type="text" required name="edit_teacher_pw_1" placeholder="Passwort">
+      <input type="password" required name="edit_teacher_pw_1" placeholder="Passwort">
     </div>
     <br>
     <div class="two-thirds">
       <label for="id1">Passwort wiederholen</label>
-      <input type="text" required name="edit_teacher_pw_2" placeholder="Wiederholen">
+      <input type="password" required name="edit_teacher_pw_2" placeholder="Wiederholen">
     </div>
     <br>
     <div class="one-third">

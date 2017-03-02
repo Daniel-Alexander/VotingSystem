@@ -52,10 +52,14 @@
 
     while($stdnt = $this->model->getRow())
     {
-      $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-      echo "<tr><td>".$stdnt_name['full_name']."</td>";
-      echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
-      echo "</tr>";
+		$stdnt_name = $this->model->getStudentById($stdnt['student_id']);
+	  
+		if($stdnt_name["active"] == 1)
+		{
+		  echo "<tr><td>".$stdnt_name['full_name']."</td>";
+		  echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+		  echo "</tr>";
+		}
     }
     echo "</tbody></table>";
 
@@ -67,9 +71,13 @@
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo "<tr><td>".$stdnt_name['full_name']."</td>";
-        echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
-        echo "</tr>";
+		
+		if($stdnt_name["active"] == 1)
+		{
+			echo "<tr><td>".$stdnt_name['full_name']."</td>";
+			echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+			echo "</tr>";
+		}
       }
       echo "</tbody></table>";
     }
@@ -81,9 +89,13 @@
       while($stdnt = $this->model->getRow())
       {
         $stdnt_name = $this->model->getStudentById($stdnt['student_id']);
-        echo "<tr><td>".$stdnt_name['full_name']."</td>";
-        echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
-        echo "</tr>";
+		
+		if($stdnt_name["active"] == 1)
+		{
+			echo "<tr><td>".$stdnt_name['full_name']."</td>";
+			echo "<td><a href='redirect.php?page=student&subpage=show&page_id=".$stdnt['student_id']."'><button class='linkBtn'>Ansehen</button></a></td>";
+			echo "</tr>";
+		}
       }
       echo "</tbody></table>";
     }

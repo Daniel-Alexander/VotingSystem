@@ -4,6 +4,7 @@ require_once 'system/model/database.php';
 require_once 'system/model/translate.php';
 require_once 'system/model/whitelist.php';
 require_once 'system/model/sendMail.php';
+require_once 'system/model/excelWrite.php';
 require_once 'system/controller/session.php';
 
 
@@ -820,10 +821,17 @@ class cModel
 
 	public function getStudentsByProject($project_id,$wish)
 	{
-		// TODO return specific error codes here
 		if(!$project_id) return false;
+		if(!$wish) return false;
 
 		return $this->database->getStudentsByProject($project_id,$wish);
+	}
+	
+	public function getStudentsAndMatrByProject($project_id)
+	{
+		if(!$project_id) return false;
+
+		return $this->database->getStudentsAndMatrByProject($project_id);
 	}
 
 	public function deleteProject($project_id)
@@ -872,14 +880,14 @@ class cModel
 
 	public function saveVotingTable()
 	{
-		$myfile = fopen("tmp/Assignment.xls", "w") or die("Unable to open file!");
-		fwrite($myfile, "Projektname\tBetreuer\tStudenten\tMatrikelnummer\n");
+		$writer = new cExcelWrite();	
+		$writer->open("tmp/Assignment.xls");
 
 		$this->startQuery('projects',0);
 		while($row = $this->getRow())
 		{
-			fwrite($myfile, $row["titel"]);
-			$students = $this->getStudentsByProject($row["project_id"],1);
+			$rTitle = $row["titel"];
+			$students = $this->getStudentsAndMatrByProject($row["project_id"]);
 			$teacher = $this->getTeacherByProject($row["order_id"]);
 
 			$nStudents = sizeof($students[0]);
@@ -888,27 +896,28 @@ class cModel
 			$max = max($nStudents,$nTeacher);
 			for ($i=0; $i < $max; $i++)
 			{
-				fwrite($myfile, "\t");
+				$rTeacher = "";
+				$rStudent = "";
+				$rMatr = "";
+				
 				if($i < $nTeacher)
-				{
-					fwrite($myfile, $teacher[0][$i]."\t");
+				{	
+					$rTeacher = $teacher[0][$i];
 				}
-				else
-				{
-					fwrite($myfile, "\t");
-				}
+				
 				if($i < $nStudents)
 				{
-					fwrite($myfile, $students[1][$i]."\t");
+					$rStudent = $students[0][$i];
+					$rMatr = $students[1][$i];
 				}
-				else
-				{
-					fwrite($myfile, "\t");
-				}
-				fwrite($myfile, "\n");
+				
+				$writer->writeRow($rTitle, $rTeacher, $rStudent, $rMatr);
+				
+				$rTitle = "";
 			}
+			$writer->writeEmptyRow();
 		}
-		fclose($myfile);
+		$writer->close();
 		return false;
 	}
 

@@ -22,6 +22,7 @@ class cSession
     }
     // Holt Cookie-Parameter.
     $cookieParams = session_get_cookie_params();
+	$cookieParams["lifetime"] = 1200;
     session_set_cookie_params($cookieParams["lifetime"],
         $cookieParams["path"],
         $cookieParams["domain"],

@@ -25,7 +25,7 @@ class cDatabase
 		$this->db_host = "";
 		$this->db_username =  "root";
 		$this->db_passwort = "";
-		$this->db_name = "votingsystem22";
+		$this->db_name = "votingsystem";
 
 	}
 
@@ -342,31 +342,45 @@ class cDatabase
 		if(!$this->connected)
 			$this->connect();
 
-			$sql = "SELECT student.student_id, student.full_name FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project".$wish."_id = '".$project_id."' AND student.active=1";
-			$result = mysql_query($sql) or die(mysql_error());
+		$sql = "SELECT student.student_id, student.full_name FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project".$wish."_id = '".$project_id."' AND student.active=1";
+		$result = mysql_query($sql) or die(mysql_error());
 
-			if(mysql_num_rows($result) > 0 )
+		if(mysql_num_rows($result) > 0 )
+		{
+			$students = array(array(),array());
+			while ($row = mysql_fetch_assoc($result))
 			{
-				$students = array(array(),array());
-				while ($row = mysql_fetch_assoc($result))
-				{
-					array_push($students[0],$row["student_id"]);
-					array_push($students[1],$row["full_name"]);
-				}
-
-				return $students;
-				/*
-				$str = "";
-				while ($row = mysql_fetch_assoc($result))
-				{
-					$str = $str.$row["full_name"]."; ";
-				}
-
-				return $str;
-				*/
+				array_push($students[0],$row["student_id"]);
+				array_push($students[1],$row["full_name"]);
 			}
 
-			else return false;
+			return $students;
+			
+		}
+
+		else return false;
+	}
+	
+	public function getStudentsAndMatrByProject($project_id)
+	{
+		if(!$this->connected)
+			$this->connect();
+
+		$sql = "SELECT student.full_name, student.matrikulation FROM student INNER JOIN student_order ON student.student_id = student_order.student_id WHERE student_order.project1_id = '".$project_id."' AND student.active=1";
+		$result = mysql_query($sql) or die(mysql_error());
+
+		if(mysql_num_rows($result) > 0 )
+		{
+			$students = array(array(),array());
+			while ($row = mysql_fetch_assoc($result))
+			{
+				array_push($students[0],$row["full_name"]);
+				array_push($students[1],$row["matrikulation"]);
+			}
+
+			return $students;	
+		}
+		else return false;
 	}
 
 	public function getStudentsWithoutRequest($nRequests)
